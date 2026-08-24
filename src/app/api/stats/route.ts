@@ -10,7 +10,10 @@ export async function GET(req: NextRequest) {
     const year = searchParams.get('year') ? Number(searchParams.get('year')) : undefined
 
     const stats = await getDashboardStats(userId, month, year)
-    return NextResponse.json(stats)
+    return NextResponse.json({
+      ...stats,
+      transactionCount: stats.transactionCount,
+    })
   } catch {
     return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
   }

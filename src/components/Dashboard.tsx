@@ -110,6 +110,9 @@ export default function Dashboard() {
         <div>
           <h2 className="text-xs font-black text-[var(--blue-500)] uppercase tracking-widest mb-1">Finanças Pessoais</h2>
           <h1 className="text-3xl font-black text-[var(--foreground)] tracking-tight capitalize">{formatMonth(month, year)}</h1>
+          <p className="text-xs text-[var(--muted-foreground)] mt-1">
+            {data.transactionCount ?? data.recentTransactions.length} transações neste mês
+          </p>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -118,6 +121,9 @@ export default function Dashboard() {
           >
             <ChevronLeft size={18} />
           </button>
+          <span className="text-sm font-bold text-[var(--foreground)] min-w-[100px] text-center">
+            {formatMonth(month, year)}
+          </span>
           <button
             onClick={() => { if (month === 12) { setMonth(1); setYear(y => y + 1) } else setMonth(m => m + 1) }}
             className="p-2 rounded-xl border border-[var(--border)] hover:bg-[var(--blue-50)] text-[var(--muted-foreground)] hover:text-[var(--blue-600)] transition-colors"
