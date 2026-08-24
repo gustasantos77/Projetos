@@ -38,6 +38,7 @@ export const updateTransactionSchema = z.object({
   description: z.string().min(1).max(200).optional(),
   amount: z.number().positive().max(999999999.99).optional(),
   type: z.enum(['INCOME', 'EXPENSE', 'TRANSFER']).optional(),
+  date: z.string().refine((val) => !isNaN(Date.parse(val)), 'Data inválida').optional(),
   categoryId: z.string().optional(),
   notes: z.string().max(500).optional(),
 })

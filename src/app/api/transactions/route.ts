@@ -55,7 +55,11 @@ export async function PUT(req: NextRequest) {
     }
 
     const { id, ...data } = validation.data
-    const transaction = await updateTransaction(id, data)
+    const updateData = {
+      ...data,
+      date: data.date ? new Date(data.date) : undefined,
+    }
+    const transaction = await updateTransaction(id, updateData)
     return NextResponse.json(transaction)
   } catch {
     return NextResponse.json({ error: 'Erro ao atualizar transação' }, { status: 400 })
