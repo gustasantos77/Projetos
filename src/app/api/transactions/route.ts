@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
 
     const transaction = await createTransaction(userId, {
       ...validation.data,
-      date: new Date(validation.data.date),
+      date: new Date(validation.data.date + 'T12:00:00'),
     })
 
     return NextResponse.json(transaction)
@@ -57,7 +57,7 @@ export async function PUT(req: NextRequest) {
     const { id, ...data } = validation.data
     const updateData = {
       ...data,
-      date: data.date ? new Date(data.date) : undefined,
+      date: data.date ? new Date(data.date + 'T12:00:00') : undefined,
     }
     const transaction = await updateTransaction(id, updateData)
     return NextResponse.json(transaction)

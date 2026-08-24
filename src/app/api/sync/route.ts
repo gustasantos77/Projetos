@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
               description: tx.description ?? tx.descriptionRaw ?? 'Transação bancária',
               amount: Math.abs(amount),
               type,
-              date: new Date(tx.date),
+              date: new Date(tx.date + 'T12:00:00'),
               bankAccountId: account.id,
             },
             create: {
@@ -93,7 +93,7 @@ export async function POST(req: NextRequest) {
               description: tx.description ?? tx.descriptionRaw ?? 'Transação bancária',
               amount: Math.abs(amount),
               type,
-              date: new Date(tx.date),
+              date: new Date(tx.date + 'T12:00:00'),
             },
           })
           imported++
