@@ -72,3 +72,6 @@
 59. **101 transações**: datas corrigidas via script
 60. **163 débitos**: movidos de volta para conta bancária
 61. **4 pares duplicados**: removidos (Saldo em atraso / Crédito de atraso)
+62. **Débito no cartão**: 163 transações movidas de volta para conta cartão
+63. **Lógica separada**: totalExpenses (gastos) vs totalInvoice (fatura)
+64. **17 commits** realizados no total
