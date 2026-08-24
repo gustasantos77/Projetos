@@ -41,8 +41,10 @@ export async function GET(req: NextRequest) {
       orderBy: { date: 'desc' },
     })
 
+    const isDebit = (desc: string) => desc.includes('Compra no débito')
+
     const totalExpenses = transactions
-      .filter(t => t.type === 'EXPENSE')
+      .filter(t => t.type === 'EXPENSE' && !isDebit(t.description))
       .reduce((sum, t) => sum + Number(t.amount), 0)
 
     const totalPayments = transactions
