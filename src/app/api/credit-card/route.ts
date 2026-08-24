@@ -44,6 +44,10 @@ export async function GET(req: NextRequest) {
     const isDebit = (desc: string) => desc.includes('Compra no débito')
 
     const totalExpenses = transactions
+      .filter(t => t.type === 'EXPENSE')
+      .reduce((sum, t) => sum + Number(t.amount), 0)
+
+    const totalInvoice = transactions
       .filter(t => t.type === 'EXPENSE' && !isDebit(t.description))
       .reduce((sum, t) => sum + Number(t.amount), 0)
 
@@ -61,8 +65,9 @@ export async function GET(req: NextRequest) {
       },
       transactions,
       totalExpenses,
+      totalInvoice,
       totalPayments,
-      currentBalance: totalExpenses - totalPayments,
+      currentBalance: totalInvoice - totalPayments,
       transactionCount: transactions.length,
     })
   } catch {

@@ -21,6 +21,7 @@ interface CreditCardData {
     category: { name: string; color: string | null } | null
   }>
   totalExpenses: number
+  totalInvoice: number
   totalPayments: number
   currentBalance: number
   transactionCount: number
@@ -75,7 +76,7 @@ export default function CreditCardView() {
     )
   }
 
-  const { account, transactions, totalExpenses, totalPayments, currentBalance, transactionCount } = data
+  const { account, transactions, totalExpenses, totalInvoice, totalPayments, currentBalance, transactionCount } = data
   const color = INSTITUTION_COLORS[account.institution] ?? '#6b7280'
 
   return (
