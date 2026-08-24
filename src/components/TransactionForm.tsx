@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { X, TrendingUp, TrendingDown, ArrowLeftRight, Check, Pencil, Trash2 } from 'lucide-react'
+import { getCategoryIcon } from '@/lib/category-icons'
 
 interface Category {
   id: string
@@ -264,23 +265,26 @@ export default function TransactionForm({ onSuccess, editTransaction, onCloseEdi
                 </label>
                 {filteredCategories.length > 0 ? (
                   <div className="grid grid-cols-3 gap-2">
-                    {filteredCategories.map(cat => (
-                      <button
-                        key={cat.id}
-                        type="button"
-                        onClick={() => setCategoryId(cat.id)}
-                        className={`flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl border-2 transition-all ${
-                          categoryId === cat.id
-                            ? 'border-[var(--blue-600)] bg-[var(--blue-50)] text-[var(--blue-600)]'
-                            : 'border-[var(--border)] text-[var(--muted-foreground)] hover:border-[var(--blue-200)]'
-                        }`}
-                      >
-                        <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm" style={{ backgroundColor: (cat.color || '#64748B') + '20', color: cat.color || '#64748B' }}>
-                          {cat.icon}
-                        </div>
-                        <span className="text-xs font-bold">{cat.name}</span>
-                      </button>
-                    ))}
+                    {filteredCategories.map(cat => {
+                      const IconComponent = getCategoryIcon(cat.icon)
+                      return (
+                        <button
+                          key={cat.id}
+                          type="button"
+                          onClick={() => setCategoryId(cat.id)}
+                          className={`flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl border-2 transition-all ${
+                            categoryId === cat.id
+                              ? 'border-[var(--blue-600)] bg-[var(--blue-50)] text-[var(--blue-600)]'
+                              : 'border-[var(--border)] text-[var(--muted-foreground)] hover:border-[var(--blue-200)]'
+                          }`}
+                        >
+                          <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ backgroundColor: (cat.color || '#64748B') + '20', color: cat.color || '#64748B' }}>
+                            <IconComponent size={16} />
+                          </div>
+                          <span className="text-xs font-bold">{cat.name}</span>
+                        </button>
+                      )
+                    })}
                   </div>
                 ) : (
                   <p className="text-sm text-[var(--muted-foreground)]">Nenhuma categoria disponível</p>
