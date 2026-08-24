@@ -52,3 +52,23 @@
 42. **Chave API Pluggy configurada**: `.env.local` atualizado com chave real, API testada com sucesso (retorna `accessToken`).
 43. **Transação existente categorizada**: transação "Americanas" atribuída à categoria "Alimentação" para que gráficos funcionem.
 44. **Build de produção verificado**: passou sem erros após todas as alterações.
+
+## 2026-08-24 — Deploy, Pluggy e Correções
+
+45. **Deploy na Vercel**: app publicado em `https://financas-pessoais-self.vercel.app`
+46. **Variáveis de ambiente**: 5 variáveis configuradas via CLI do Vercel
+47. **Autenticação Pluggy migrada**: fluxo `clientId` + `clientSecret` → `POST /auth` → `apiKey`
+48. **Service Worker corrigido**: prioriza rede sobre cache, fallback correto
+49. **CSP atualizado**: `connect.pluggy.ai` adicionado a `frame-src` e `connect-src`
+50. **Senha fortalecida**: 24 caracteres com alta entropia
+51. **Email atualizado**: `gustavo@lima.com` em ambos os bancos
+52. **Pluggy Connect atualizado**: versão `latest` do widget
+53. **Dashboard melhorado**: contagem de transações, cache desabilitado, limpeza de estado
+54. **Ícones de categorias**: renderização correta com Lucide icons
+55. **Timezone corrigido**: `T12:00:00` evita deslocamento de dia
+56. **Campo date no update**: schema e rota PUT atualizados
+57. **CREDIT→CREDIT_CARD**: conversão automática na importação
+58. **Instituição detectada**: usa `connector.name` da Pluggy
+59. **101 transações**: datas corrigidas via script
+60. **163 débitos**: movidos de volta para conta bancária
+61. **4 pares duplicados**: removidos (Saldo em atraso / Crédito de atraso)

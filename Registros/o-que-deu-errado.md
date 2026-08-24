@@ -54,3 +54,45 @@
 13. Usuário seed (`admin@financas.com`) tinha hash de senha placeholder.
     - Causa: `prisma/seed.ts` usava hash inválido.
     - Resolução: criada conta de teste via API signup (`admin@test.com` / `Test1234!`).
+
+## 2026-08-24 — Deploy e Correções
+
+14. Build falhou no Vercel com erro `PrismaClientInitializationError`.
+    - Causa: `prisma generate` não rodava automaticamente no build.
+    - Resolução: adicionado `"postinstall": "prisma generate"` no `package.json`.
+
+15. Chave Pluggy `PLUGGY_API_KEY` retornava erro 403.
+    - Causa: Pluggy mudou autenticação para fluxo `clientId` + `clientSecret`.
+    - Resolução: migrado para `POST /auth` com `clientId`/`clientSecret`.
+
+16. Site não abria no celular (5G).
+    - Causa: CSP bloqueava `connect.pluggy.ai` e service worker com cache incorreto.
+    - Resolução: CSP atualizado + service worker reescrito.
+
+17. Widget Pluggy Connect carregava infinitamente.
+    - Causa: versão antiga do SDK (`v2.8.2`).
+    - Resolução: atualizado para `latest`.
+
+18. Transações apareciam com 1 dia a menos.
+    - Causa: `new Date("2026-08-24")` criava UTC midnight, Brasil virava dia anterior.
+    - Resolução: adicionado `T12:00:00` em todas as conversões de data.
+
+19. Atualização de data não funcionava.
+    - Causa: schema `updateTransactionSchema` não incluía campo `date`.
+    - Resolução: adicionado `date` ao schema e rota PUT.
+
+20. Cartão de crédito aparecia como conta bancária.
+    - Causa: tipo `CREDIT` da Pluggy não era reconhecido (app esperava `CREDIT_CARD`).
+    - Resolução: conversão automática `CREDIT` → `CREDIT_CARD` na importação.
+
+21. Compras no débito foram movidas para o cartão de crédito.
+    - Causa: lógica incorreta ao mover transações.
+    - Resolução: revertido — débito não vai na fatura do cartão.
+
+22. Pares "Saldo em atraso" / "Crédito de atraso" duplicados.
+    - Causa: Pluggy retornava ENTRADA e ESTORNO da mesma penalidade.
+    - Resolução: 4 pares deletados (manter apenas EXPENSE).
+
+23. Fatura do cartão mostrava R$ 83,57 vs real R$ 719,12.
+    - Causa: Pluggy sandbox não entrega transações reais do cartão.
+    - Resolução: aguardando aprovação para dados reais.
