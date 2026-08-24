@@ -3,7 +3,7 @@
 ## Status atual (2026-08-21)
 
 - Servidor rodando em http://localhost:3002
-- Conta de teste: `admin@test.com` / `Test1234!`
+- Conta de teste: `admin@test.com` / `F!n@nc4s#2026`
 - Chave Pluggy: configurada e testada (API retorna token)
 - Categorias: 6 categorias fixas (Alimentação, Transporte, Lazer, Contas fixas, Salário, Outros)
 - Categoria obrigatória no formulário de transação
