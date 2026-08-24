@@ -12,6 +12,7 @@ interface DashboardData {
   totalIncome: number
   totalExpenses: number
   netBalance: number
+  transactionCount: number
   accounts: Array<{
     id: string
     name: string
