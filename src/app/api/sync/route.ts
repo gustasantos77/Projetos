@@ -43,10 +43,11 @@ export async function POST(req: NextRequest) {
         const { prisma } = await import('@/lib/prisma')
         const exists = await prisma.bankAccount.findFirst({ where: { pluggyAccountId: acc.id } })
         if (!exists) {
+          const institutionName = acc.institution?.name ?? item.connector?.name ?? item.institution?.name ?? 'Desconhecido'
           const newAcc = await createBankAccount(userId, {
             name: acc.name,
             type: acc.type,
-            institution: acc.institution?.name ?? item.institution?.name ?? 'Desconhecido',
+            institution: institutionName,
             pluggyItemId: itemId,
             pluggyAccountId: acc.id,
             balance: acc.balance,
