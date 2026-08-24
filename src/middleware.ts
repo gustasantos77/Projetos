@@ -104,8 +104,8 @@ function addSecurityHeaders(response: NextResponse): NextResponse {
     "style-src 'self' 'unsafe-inline'; " +
     "img-src 'self' data: blob:; " +
     "font-src 'self'; " +
-    "connect-src 'self' https://api.pluggy.ai https://cdn.pluggy.ai wss://connect.pluggy.ai; " +
-    "frame-src 'self' https://cdn.pluggy.ai; " +
+    "connect-src 'self' https://api.pluggy.ai https://cdn.pluggy.ai https://connect.pluggy.ai wss://connect.pluggy.ai; " +
+    "frame-src 'self' https://cdn.pluggy.ai https://connect.pluggy.ai; " +
     "object-src 'none'; " +
     "base-uri 'self'"
   )
