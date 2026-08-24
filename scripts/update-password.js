@@ -4,18 +4,22 @@ const bcrypt = require('bcryptjs')
 const prisma = new PrismaClient()
 
 async function main() {
-  const email = 'admin@test.com'
-  const newPassword = 'F!n@nc4s#2026'
+  const email = 'gustavo@lima.com'
+  const newPassword = process.argv[2]
+  
+  if (!newPassword) {
+    console.error('Uso: npx tsx scripts/update-password.js <nova-senha>')
+    process.exit(1)
+  }
   
   const passwordHash = await bcrypt.hash(newPassword, 12)
   
-  const user = await prisma.user.update({
+  await prisma.user.update({
     where: { email },
     data: { passwordHash }
   })
   
   console.log(`Senha atualizada para: ${email}`)
-  console.log(`Nova senha: ${newPassword}`)
 }
 
 main()

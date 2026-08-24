@@ -83,7 +83,7 @@ export default function SettingsPanel() {
     }
 
     const script = document.createElement('script')
-    script.src = 'https://cdn.pluggy.ai/pluggy-connect/v2.8.2/pluggy-connect.js'
+    script.src = 'https://cdn.pluggy.ai/pluggy-connect/latest/pluggy-connect.js'
     script.async = true
     script.dataset.pluggyConnect = 'true'
     script.crossOrigin = 'anonymous'
