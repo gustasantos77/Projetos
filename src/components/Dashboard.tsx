@@ -70,8 +70,9 @@ export default function Dashboard() {
 
   const fetchData = async () => {
     setLoading(true)
+    setData(null)
     try {
-      const res = await fetch(`/api/stats?month=${month}&year=${year}`)
+      const res = await fetch(`/api/stats?month=${month}&year=${year}&_t=${Date.now()}`)
       if (res.ok) setData(await res.json())
     } finally {
       setLoading(false)

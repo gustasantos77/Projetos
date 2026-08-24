@@ -13,6 +13,11 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       ...stats,
       transactionCount: stats.transactionCount,
+    }, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate',
+        'Pragma': 'no-cache',
+      },
     })
   } catch {
     return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
