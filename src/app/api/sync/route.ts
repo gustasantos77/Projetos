@@ -44,9 +44,10 @@ export async function POST(req: NextRequest) {
         const exists = await prisma.bankAccount.findFirst({ where: { pluggyAccountId: acc.id } })
         if (!exists) {
           const institutionName = acc.institution?.name ?? item.connector?.name ?? item.institution?.name ?? 'Desconhecido'
+          const accountType = acc.type === 'CREDIT' ? 'CREDIT_CARD' : acc.type
           const newAcc = await createBankAccount(userId, {
             name: acc.name,
-            type: acc.type,
+            type: accountType,
             institution: institutionName,
             pluggyItemId: itemId,
             pluggyAccountId: acc.id,
