@@ -99,20 +99,20 @@ export default function TransactionList() {
         <div className="flex items-center gap-2">
           <button
             onClick={handleExport}
-            className="px-3 py-1.5 rounded-xl bg-[var(--green-50)] text-[var(--green-600)] text-xs font-bold flex items-center gap-1 hover:bg-[var(--green-100)] transition-colors"
+            className="px-3 py-1.5 rounded-xl bg-[var(--muted)] text-[var(--green-600)] text-xs font-bold flex items-center gap-1 hover:bg-[var(--green-50)] transition-colors"
           >
             <Download size={12} /> Exportar CSV
           </button>
           <button
             onClick={() => { if (month === 1) { setMonth(12); setYear(y => y - 1) } else setMonth(m => m - 1) }}
-            className="p-2 rounded-xl border border-[var(--border)] hover:bg-[var(--blue-50)] text-[var(--muted-foreground)] hover:text-[var(--blue-600)] transition-colors"
+            className="p-2 rounded-xl border border-[var(--border)] hover:bg-[var(--muted)] text-[var(--muted-foreground)] hover:text-[var(--blue-600)] transition-colors"
           >
             <ChevronLeft size={18} />
           </button>
           <span className="text-sm font-bold min-w-[80px] text-center">{String(month).padStart(2, '0')}/{year}</span>
           <button
             onClick={() => { if (month === 12) { setMonth(1); setYear(y => y + 1) } else setMonth(m => m + 1) }}
-            className="p-2 rounded-xl border border-[var(--border)] hover:bg-[var(--blue-50)] text-[var(--muted-foreground)] hover:text-[var(--blue-600)] transition-colors"
+            className="p-2 rounded-xl border border-[var(--border)] hover:bg-[var(--muted)] text-[var(--muted-foreground)] hover:text-[var(--blue-600)] transition-colors"
           >
             <ChevronRight size={18} />
           </button>
@@ -160,15 +160,15 @@ export default function TransactionList() {
       {/* List */}
       {transactions.length === 0 ? (
         <div className="text-center py-10">
-          <div className="w-16 h-16 bg-[var(--blue-50)] rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <TrendingDown size={24} className="text-[var(--blue-500)]" />
+            <div className="w-16 h-16 bg-[var(--muted)] rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <TrendingDown size={24} className="text-[var(--blue-500)]" />
           </div>
           <p className="text-[var(--foreground)] font-medium">Nenhuma transação encontrada</p>
         </div>
       ) : (
-        <div className="bg-white rounded-2xl border border-[var(--border)] divide-y divide-[var(--border)]">
+        <div className="bg-[var(--card)] rounded-2xl border border-[var(--border)] divide-y divide-[var(--border)]">
           {transactions.map(tx => (
-            <div key={tx.id} className="flex items-center justify-between p-4 hover:bg-[var(--blue-50)]/50 transition-colors group">
+            <div key={tx.id} className="flex items-center justify-between p-4 hover:bg-[var(--muted)]/50 transition-colors group">
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 <div className={`p-2.5 rounded-xl ${tx.type === 'INCOME' ? 'bg-[var(--green-50)] text-[var(--green-600)]' : 'bg-red-50 text-red-500'}`}>
                   {tx.type === 'INCOME' ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
@@ -191,7 +191,7 @@ export default function TransactionList() {
                 </div>
                 <button
                   onClick={() => handleEdit(tx)}
-                  className="p-1.5 rounded-lg text-[var(--muted-foreground)] hover:text-[var(--blue-600)] hover:bg-[var(--blue-50)] opacity-0 group-hover:opacity-100 transition-all"
+                  className="p-1.5 rounded-lg text-[var(--muted-foreground)] hover:text-[var(--blue-600)] hover:bg-[var(--muted)] opacity-0 group-hover:opacity-100 transition-all"
                   title="Editar"
                 >
                   <Pencil size={14} />

@@ -36,9 +36,9 @@ interface TransactionFormProps {
 }
 
 const TYPE_OPTIONS = [
-  { value: 'EXPENSE', label: 'Despesa', icon: TrendingDown, color: 'text-red-500', bg: 'bg-red-50', border: 'border-red-300' },
-  { value: 'INCOME', label: 'Receita', icon: TrendingUp, color: 'text-[var(--green-600)]', bg: 'bg-[var(--green-50)]', border: 'border-[var(--green-300)]' },
-  { value: 'TRANSFER', label: 'Transferência', icon: ArrowLeftRight, color: 'text-[var(--blue-600)]', bg: 'bg-[var(--blue-50)]', border: 'border-[var(--blue-300)]' },
+  { value: 'EXPENSE', label: 'Despesa', icon: TrendingDown, color: 'text-red-500', bg: 'bg-[var(--muted)]', border: 'border-red-400' },
+  { value: 'INCOME', label: 'Receita', icon: TrendingUp, color: 'text-[var(--green-600)]', bg: 'bg-[var(--muted)]', border: 'border-[var(--green-400)]' },
+  { value: 'TRANSFER', label: 'Transferência', icon: ArrowLeftRight, color: 'text-[var(--blue-600)]', bg: 'bg-[var(--muted)]', border: 'border-[var(--blue-400)]' },
 ]
 
 export default function TransactionForm({ onSuccess, editTransaction, onCloseEdit }: TransactionFormProps) {
@@ -175,13 +175,13 @@ export default function TransactionForm({ onSuccess, editTransaction, onCloseEdi
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={handleClose} />
 
-          <div className="relative bg-white w-full sm:max-w-lg sm:rounded-2xl rounded-t-2xl max-h-[90vh] overflow-y-auto shadow-2xl animate-slide-up">
+            <div className="relative bg-[var(--card)] w-full sm:max-w-lg sm:rounded-2xl rounded-t-2xl max-h-[90vh] overflow-y-auto shadow-2xl animate-slide-up">
             {/* Header */}
-            <div className="sticky top-0 bg-white z-10 flex items-center justify-between px-6 py-4 border-b border-[var(--border)]">
+            <div className="sticky top-0 bg-[var(--card)] z-10 flex items-center justify-between px-6 py-4 border-b border-[var(--border)]">
               <h2 className="text-lg font-bold">{isEditing ? 'Editar Transação' : 'Nova Transação'}</h2>
               <div className="flex items-center gap-1">
                 {isEditing && (
-                  <button onClick={handleDelete} className="p-1.5 rounded-lg hover:bg-red-50 text-red-500 transition-colors" title="Excluir">
+                  <button onClick={handleDelete} className="p-1.5 rounded-lg hover:bg-[var(--muted)] text-red-500 transition-colors" title="Excluir">
                     <Trash2 size={18} />
                   </button>
                 )}
@@ -207,7 +207,7 @@ export default function TransactionForm({ onSuccess, editTransaction, onCloseEdi
                         className={`flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl border-2 transition-all ${
                           selected
                             ? `${opt.bg} ${opt.border} ${opt.color}`
-                            : 'border-[var(--border)] text-[var(--muted-foreground)] hover:border-[var(--blue-200)]'
+                            : 'border-[var(--border)] text-[var(--muted-foreground)] hover:border-[var(--blue-400)]'
                         }`}
                       >
                         <Icon size={18} />
@@ -274,8 +274,8 @@ export default function TransactionForm({ onSuccess, editTransaction, onCloseEdi
                           onClick={() => setCategoryId(cat.id)}
                           className={`flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl border-2 transition-all ${
                             categoryId === cat.id
-                              ? 'border-[var(--blue-600)] bg-[var(--blue-50)] text-[var(--blue-600)]'
-                              : 'border-[var(--border)] text-[var(--muted-foreground)] hover:border-[var(--blue-200)]'
+                              ? 'border-[var(--blue-600)] bg-[var(--muted)] text-[var(--blue-600)]'
+                              : 'border-[var(--border)] text-[var(--muted-foreground)] hover:border-[var(--blue-400)]'
                           }`}
                         >
                           <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ backgroundColor: (cat.color || '#64748B') + '20', color: cat.color || '#64748B' }}>
@@ -298,7 +298,7 @@ export default function TransactionForm({ onSuccess, editTransaction, onCloseEdi
                   <select
                     value={bankAccountId}
                     onChange={e => setBankAccountId(e.target.value)}
-                    className="w-full px-4 py-3 border border-[var(--border)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--blue-500)] transition-all bg-white"
+                    className="w-full px-4 py-3 border border-[var(--border)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--blue-500)] transition-all bg-[var(--card)]"
                   >
                     <option value="">Sem conta vinculada</option>
                     {accounts.map(acc => (

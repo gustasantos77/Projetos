@@ -20,7 +20,7 @@ export default function FinanceNav() {
 
   return (
     <div className="flex items-center justify-between gap-4">
-      <nav className="flex gap-1 p-1 bg-white rounded-2xl border border-[var(--border)] overflow-x-auto flex-1">
+      <nav className="flex gap-1 p-1 bg-[var(--card)] rounded-2xl border border-[var(--border)] overflow-x-auto flex-1">
         {tabs.map(tab => {
           const isActive = pathname === tab.href || (tab.href !== '/' && pathname.startsWith(tab.href))
           return (
@@ -31,7 +31,7 @@ export default function FinanceNav() {
                 'flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all',
                 isActive
                   ? 'bg-[var(--blue-600)] text-white shadow-md shadow-[var(--blue-600)]/20'
-                  : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--blue-50)]'
+                  : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--muted)]'
               )}
             >
               <tab.icon size={16} />
@@ -42,7 +42,7 @@ export default function FinanceNav() {
       </nav>
       <button
         onClick={() => signOut({ callbackUrl: '/auth/signin' })}
-        className="p-2.5 rounded-xl text-[var(--muted-foreground)] hover:text-red-500 hover:bg-red-50 transition-colors"
+        className="p-2.5 rounded-xl text-[var(--muted-foreground)] hover:text-red-500 hover:bg-[var(--muted)] transition-colors"
         title="Sair"
       >
         <LogOut size={18} />

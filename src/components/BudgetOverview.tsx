@@ -96,14 +96,14 @@ export default function BudgetOverview() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => { if (month === 1) { setMonth(12); setYear(y => y - 1) } else setMonth(m => m - 1) }}
-            className="p-2 rounded-xl border border-[var(--border)] hover:bg-[var(--blue-50)] text-[var(--muted-foreground)] hover:text-[var(--blue-600)] transition-colors"
+            className="p-2 rounded-xl border border-[var(--border)] hover:bg-[var(--muted)] text-[var(--muted-foreground)] hover:text-[var(--blue-600)] transition-colors"
           >
             <ChevronLeft size={18} />
           </button>
           <span className="text-sm font-bold min-w-[80px] text-center">{String(month).padStart(2, '0')}/{year}</span>
           <button
             onClick={() => { if (month === 12) { setMonth(1); setYear(y => y + 1) } else setMonth(m => m + 1) }}
-            className="p-2 rounded-xl border border-[var(--border)] hover:bg-[var(--blue-50)] text-[var(--muted-foreground)] hover:text-[var(--blue-600)] transition-colors"
+            className="p-2 rounded-xl border border-[var(--border)] hover:bg-[var(--muted)] text-[var(--muted-foreground)] hover:text-[var(--blue-600)] transition-colors"
           >
             <ChevronRight size={18} />
           </button>
@@ -117,7 +117,7 @@ export default function BudgetOverview() {
       </div>
 
       {showForm && (
-        <div className="bg-white p-4 rounded-2xl border border-[var(--border)] flex flex-wrap gap-3 items-end">
+        <div className="bg-[var(--card)] p-4 rounded-2xl border border-[var(--border)] flex flex-wrap gap-3 items-end">
           <div className="flex-1 min-w-[200px]">
             <label className="block text-xs font-bold text-[var(--muted-foreground)] mb-1">Categoria</label>
             <select
@@ -161,7 +161,7 @@ export default function BudgetOverview() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {budgets.map(b => (
-            <div key={b.id} className="bg-white p-5 rounded-2xl border border-[var(--border)] hover:shadow-md transition-shadow">
+            <div key={b.id} className="bg-[var(--card)] p-5 rounded-2xl border border-[var(--border)] hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full" style={{ backgroundColor: b.category.color ?? 'var(--blue-500)' }} />

@@ -73,7 +73,7 @@ function ResetPasswordForm() {
             </div>
             <span className="text-2xl font-black text-[var(--blue-600)]">Finanças</span>
           </div>
-          <div className="bg-white p-8 rounded-2xl border border-[var(--border)]">
+          <div className="bg-[var(--card)] p-8 rounded-2xl border border-[var(--border)]">
             <h2 className="text-xl font-black text-[var(--foreground)] mb-2">Link inválido</h2>
             <p className="text-sm text-[var(--muted-foreground)]">
               O link de redefinição de senha é inválido ou expirou.
@@ -97,7 +97,7 @@ function ResetPasswordForm() {
           <span className="text-2xl font-black text-[var(--blue-600)]">Finanças</span>
         </div>
 
-        <div className="bg-white p-8 rounded-2xl border border-[var(--border)]">
+        <div className="bg-[var(--card)] p-8 rounded-2xl border border-[var(--border)]">
           <h2 className="text-xl font-black text-[var(--foreground)] mb-2">
             Redefinir senha
           </h2>
@@ -145,7 +145,7 @@ function ResetPasswordForm() {
             </div>
 
             {error && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-600">
+              <div className="p-3 bg-[var(--muted)] border border-red-200 rounded-xl text-sm text-red-500">
                 {error}
               </div>
             )}

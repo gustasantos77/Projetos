@@ -92,7 +92,7 @@ export default function SignIn() {
       </div>
 
       {/* Right side - Login form */}
-      <div className="flex-1 flex items-center justify-center p-8 bg-white">
+      <div className="flex-1 flex items-center justify-center p-8 bg-[var(--background)]">
         <div className="w-full max-w-md">
           {/* Mobile logo */}
           <div className="lg:hidden flex items-center justify-center gap-3 mb-10">
@@ -133,7 +133,7 @@ export default function SignIn() {
               <div className="w-full border-t border-[var(--border)]" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="px-2 bg-white text-[var(--muted-foreground)]">ou</span>
+              <span className="px-2 bg-[var(--background)] text-[var(--muted-foreground)]">ou</span>
             </div>
           </div>
 
@@ -183,7 +183,7 @@ export default function SignIn() {
             </div>
 
             {error && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-600">
+              <div className="p-3 bg-[var(--muted)] border border-red-200 rounded-xl text-sm text-red-500">
                 {error}
               </div>
             )}

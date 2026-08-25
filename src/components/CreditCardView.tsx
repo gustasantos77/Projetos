@@ -89,14 +89,14 @@ export default function CreditCardView() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => { if (month === 1) { setMonth(12); setYear(y => y - 1) } else setMonth(m => m - 1) }}
-            className="p-2 rounded-xl border border-[var(--border)] hover:bg-[var(--blue-50)] text-[var(--muted-foreground)] hover:text-[var(--blue-600)] transition-colors"
+            className="p-2 rounded-xl border border-[var(--border)] hover:bg-[var(--muted)] text-[var(--muted-foreground)] hover:text-[var(--blue-600)] transition-colors"
           >
             <ChevronLeft size={18} />
           </button>
           <span className="text-sm font-bold min-w-[80px] text-center">{String(month).padStart(2, '0')}/{year}</span>
           <button
             onClick={() => { if (month === 12) { setMonth(1); setYear(y => y + 1) } else setMonth(m => m + 1) }}
-            className="p-2 rounded-xl border border-[var(--border)] hover:bg-[var(--blue-50)] text-[var(--muted-foreground)] hover:text-[var(--blue-600)] transition-colors"
+            className="p-2 rounded-xl border border-[var(--border)] hover:bg-[var(--muted)] text-[var(--muted-foreground)] hover:text-[var(--blue-600)] transition-colors"
           >
             <ChevronRight size={18} />
           </button>
@@ -104,23 +104,23 @@ export default function CreditCardView() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white p-5 rounded-2xl border border-[var(--border)] shadow-sm">
+        <div className="bg-[var(--card)] p-5 rounded-2xl border border-[var(--border)] shadow-sm">
           <div className="flex items-center gap-3 mb-2">
-            <div className="p-2.5 rounded-xl bg-red-50 text-red-500"><TrendingDown size={18} /></div>
+            <div className="p-2.5 rounded-xl bg-[var(--muted)] text-red-500"><TrendingDown size={18} /></div>
             <span className="text-xs font-bold text-[var(--muted-foreground)] uppercase">Gastos do Mês</span>
           </div>
           <p className="text-xl font-black text-red-500">{formatCurrency(totalExpenses)}</p>
         </div>
-        <div className="bg-white p-5 rounded-2xl border border-[var(--border)] shadow-sm">
+        <div className="bg-[var(--card)] p-5 rounded-2xl border border-[var(--border)] shadow-sm">
           <div className="flex items-center gap-3 mb-2">
-            <div className="p-2.5 rounded-xl bg-[var(--green-50)] text-[var(--green-600)]"><TrendingUp size={18} /></div>
+            <div className="p-2.5 rounded-xl bg-[var(--muted)] text-[var(--green-600)]"><TrendingUp size={18} /></div>
             <span className="text-xs font-bold text-[var(--muted-foreground)] uppercase">Pagamentos</span>
           </div>
           <p className="text-xl font-black text-[var(--green-600)]">{formatCurrency(totalPayments)}</p>
         </div>
-        <div className="bg-white p-5 rounded-2xl border border-[var(--border)] shadow-sm">
+        <div className="bg-[var(--card)] p-5 rounded-2xl border border-[var(--border)] shadow-sm">
           <div className="flex items-center gap-3 mb-2">
-            <div className="p-2.5 rounded-xl bg-[var(--blue-50)] text-[var(--blue-600)]"><CreditCard size={18} /></div>
+            <div className="p-2.5 rounded-xl bg-[var(--muted)] text-[var(--blue-600)]"><CreditCard size={18} /></div>
             <span className="text-xs font-bold text-[var(--muted-foreground)] uppercase">Saldo da Fatura</span>
           </div>
           <p className={`text-xl font-black ${currentBalance > 0 ? 'text-red-500' : 'text-[var(--green-600)]'}`}>
@@ -135,7 +135,7 @@ export default function CreditCardView() {
         <span className="text-xs text-[var(--muted-foreground)]">· {transactionCount} transações</span>
       </div>
 
-      <section className="bg-white p-6 rounded-2xl border border-[var(--border)]">
+      <section className="bg-[var(--card)] p-6 rounded-2xl border border-[var(--border)]">
         <h2 className="text-sm font-black text-[var(--blue-500)] uppercase tracking-widest mb-4">Transações do Cartão</h2>
         {transactions.length === 0 ? (
           <div className="text-center py-8">

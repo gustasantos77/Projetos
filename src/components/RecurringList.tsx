@@ -103,7 +103,7 @@ export default function RecurringList() {
       </div>
 
       {showForm && (
-        <div className="bg-white p-4 rounded-2xl border border-[var(--border)] space-y-3">
+        <div className="bg-[var(--card)] p-4 rounded-2xl border border-[var(--border)] space-y-3">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <input
               type="text"
@@ -176,7 +176,7 @@ export default function RecurringList() {
       ) : (
         <div className="space-y-3">
           {recurring.map(r => (
-            <div key={r.id} className="bg-white p-4 rounded-2xl border border-[var(--border)] flex items-center justify-between hover:shadow-md transition-shadow">
+            <div key={r.id} className="bg-[var(--card)] p-4 rounded-2xl border border-[var(--border)] flex items-center justify-between hover:shadow-md transition-shadow">
               <div className="flex items-center gap-3">
                 <div className={`p-2.5 rounded-xl ${r.type === 'INCOME' ? 'bg-[var(--green-50)] text-[var(--green-600)]' : 'bg-red-50 text-red-500'}`}>
                   <Repeat size={16} />

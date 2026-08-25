@@ -217,7 +217,23 @@ export async function getDashboardStats(userId: string, month?: number, year?: n
     }),
   ])
 
-  const totalBalance = accounts.reduce((sum, acc) => sum + Number(acc.balance ?? 0), 0)
+  const currentTotalBalance = accounts.reduce((sum, acc) => sum + Number(acc.balance ?? 0), 0)
+
+  const futureTransactions = await prisma.transaction.findMany({
+    where: {
+      userId,
+      date: { gt: end },
+    },
+    select: { amount: true, type: true },
+  })
+
+  const futureNetEffect = futureTransactions.reduce((sum, t) => {
+    if (t.type === 'INCOME') return sum - Number(t.amount)
+    if (t.type === 'EXPENSE') return sum + Number(t.amount)
+    return sum
+  }, 0)
+
+  const totalBalance = currentTotalBalance + futureNetEffect
   const totalIncome = monthTransactions
     .filter(t => t.type === 'INCOME')
     .reduce((sum, t) => sum + Number(t.amount), 0)

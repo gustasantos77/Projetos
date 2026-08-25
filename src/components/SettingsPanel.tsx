@@ -189,9 +189,9 @@ export default function SettingsPanel() {
       <h1 className="text-2xl font-black text-[var(--foreground)]">Configurações</h1>
 
       {/* Connected Accounts */}
-      <section className="bg-white p-6 rounded-2xl border border-[var(--border)]">
+      <section className="bg-[var(--card)] p-6 rounded-2xl border border-[var(--border)]">
         {error && (
-          <p className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+          <p className="mb-4 rounded-xl border border-red-200 bg-[var(--muted)] px-4 py-3 text-sm font-medium text-red-500">
             {error}
           </p>
         )}
@@ -199,7 +199,7 @@ export default function SettingsPanel() {
           <h2 className="text-sm font-black text-[var(--blue-500)] uppercase tracking-widest">Contas Conectadas</h2>
           <button
             onClick={handleSyncAll}
-            className="px-3 py-1.5 rounded-xl bg-[var(--blue-50)] text-[var(--blue-600)] text-xs font-bold flex items-center gap-1 hover:bg-[var(--blue-100)] transition-colors"
+            className="px-3 py-1.5 rounded-xl bg-[var(--muted)] text-[var(--blue-600)] text-xs font-bold flex items-center gap-1 hover:bg-[var(--blue-50)] transition-colors"
           >
             <RefreshCw size={12} /> Sincronizar Todas
           </button>
@@ -216,7 +216,7 @@ export default function SettingsPanel() {
         ) : (
           <div className="space-y-3">
             {accounts.map(acc => (
-              <div key={acc.id} className="flex items-center justify-between p-4 rounded-xl border border-[var(--border)] hover:bg-[var(--blue-50)]/50 transition-colors">
+              <div key={acc.id} className="flex items-center justify-between p-4 rounded-xl border border-[var(--border)] hover:bg-[var(--muted)]/50 transition-colors">
                 <div className="flex items-center gap-3">
                   <div
                     className="w-3 h-3 rounded-full"
@@ -249,7 +249,7 @@ export default function SettingsPanel() {
       </section>
 
       {/* Connect New */}
-      <section className="bg-white p-6 rounded-2xl border border-[var(--border)]">
+      <section className="bg-[var(--card)] p-6 rounded-2xl border border-[var(--border)]">
         <h2 className="text-sm font-black text-[var(--blue-500)] uppercase tracking-widest mb-4">Conectar Nova Conta</h2>
         <p className="text-sm text-[var(--muted-foreground)] mb-4">
           Conecte suas contas bancárias para importar transações automaticamente.

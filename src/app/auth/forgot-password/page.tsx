@@ -46,11 +46,11 @@ export default function ForgotPassword() {
           <span className="text-2xl font-black text-[var(--blue-600)]">Finanças</span>
         </div>
 
-        <div className="bg-white p-8 rounded-2xl border border-[var(--border)]">
+        <div className="bg-[var(--card)] p-8 rounded-2xl border border-[var(--border)]">
           {sent ? (
             <div className="text-center">
-              <div className="w-16 h-16 bg-green-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-16 h-16 bg-[var(--muted)] rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-[var(--green-500)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
@@ -91,7 +91,7 @@ export default function ForgotPassword() {
                 </div>
 
                 {error && (
-                  <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-600">
+                  <div className="p-3 bg-[var(--muted)] border border-red-200 rounded-xl text-sm text-red-500">
                     {error}
                   </div>
                 )}

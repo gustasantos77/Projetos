@@ -74,7 +74,7 @@ export default function SignUp() {
       </div>
 
       {/* Right side - Form */}
-      <div className="flex-1 flex items-center justify-center p-8 bg-white">
+      <div className="flex-1 flex items-center justify-center p-8 bg-[var(--background)]">
         <div className="w-full max-w-md">
           <div className="lg:hidden flex items-center justify-center gap-3 mb-10">
             <div className="p-3 bg-[var(--blue-600)] rounded-2xl">
@@ -163,7 +163,7 @@ export default function SignUp() {
             </div>
 
             {error && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-600">
+              <div className="p-3 bg-[var(--muted)] border border-red-200 rounded-xl text-sm text-red-500">
                 {error}
               </div>
             )}

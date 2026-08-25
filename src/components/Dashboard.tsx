@@ -119,7 +119,7 @@ export default function Dashboard() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => { if (month === 1) { setMonth(12); setYear(y => y - 1) } else setMonth(m => m - 1) }}
-            className="p-2 rounded-xl border border-[var(--border)] hover:bg-[var(--blue-50)] text-[var(--muted-foreground)] hover:text-[var(--blue-600)] transition-colors"
+            className="p-2 rounded-xl border border-[var(--border)] hover:bg-[var(--muted)] text-[var(--muted-foreground)] hover:text-[var(--blue-600)] transition-colors"
           >
             <ChevronLeft size={18} />
           </button>
@@ -128,7 +128,7 @@ export default function Dashboard() {
           </span>
           <button
             onClick={() => { if (month === 12) { setMonth(1); setYear(y => y + 1) } else setMonth(m => m + 1) }}
-            className="p-2 rounded-xl border border-[var(--border)] hover:bg-[var(--blue-50)] text-[var(--muted-foreground)] hover:text-[var(--blue-600)] transition-colors"
+            className="p-2 rounded-xl border border-[var(--border)] hover:bg-[var(--muted)] text-[var(--muted-foreground)] hover:text-[var(--blue-600)] transition-colors"
           >
             <ChevronRight size={18} />
           </button>
@@ -145,36 +145,36 @@ export default function Dashboard() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white p-5 rounded-2xl border border-[var(--border)] shadow-sm card-hover">
+        <div className="bg-[var(--card)] p-5 rounded-2xl border border-[var(--border)] shadow-sm card-hover">
           <div className="flex items-center gap-3 mb-3">
-            <div className="p-2.5 rounded-xl bg-[var(--blue-50)] text-[var(--blue-600)]">
+            <div className="p-2.5 rounded-xl bg-[var(--muted)] text-[var(--blue-600)]">
               <Wallet size={18} />
             </div>
             <span className="text-xs font-bold text-[var(--muted-foreground)] uppercase">Saldo Total</span>
           </div>
           <p className="text-xl font-black">{formatCurrency(data.totalBalance)}</p>
         </div>
-        <div className="bg-white p-5 rounded-2xl border border-[var(--border)] shadow-sm card-hover">
+        <div className="bg-[var(--card)] p-5 rounded-2xl border border-[var(--border)] shadow-sm card-hover">
           <div className="flex items-center gap-3 mb-3">
-            <div className="p-2.5 rounded-xl bg-[var(--green-50)] text-[var(--green-600)]">
+            <div className="p-2.5 rounded-xl bg-[var(--muted)] text-[var(--green-600)]">
               <ArrowUpRight size={18} />
             </div>
             <span className="text-xs font-bold text-[var(--muted-foreground)] uppercase">Receitas</span>
           </div>
           <p className="text-xl font-black text-[var(--green-600)]">{formatCurrency(data.totalIncome)}</p>
         </div>
-        <div className="bg-white p-5 rounded-2xl border border-[var(--border)] shadow-sm card-hover">
+        <div className="bg-[var(--card)] p-5 rounded-2xl border border-[var(--border)] shadow-sm card-hover">
           <div className="flex items-center gap-3 mb-3">
-            <div className="p-2.5 rounded-xl bg-red-50 text-red-500">
+            <div className="p-2.5 rounded-xl bg-[var(--muted)] text-red-500">
               <ArrowDownRight size={18} />
             </div>
             <span className="text-xs font-bold text-[var(--muted-foreground)] uppercase">Despesas</span>
           </div>
           <p className="text-xl font-black text-red-500">{formatCurrency(data.totalExpenses)}</p>
         </div>
-        <div className="bg-white p-5 rounded-2xl border border-[var(--border)] shadow-sm card-hover">
+        <div className="bg-[var(--card)] p-5 rounded-2xl border border-[var(--border)] shadow-sm card-hover">
           <div className="flex items-center gap-3 mb-3">
-            <div className={`p-2.5 rounded-xl ${data.netBalance >= 0 ? 'bg-[var(--green-50)] text-[var(--green-600)]' : 'bg-red-50 text-red-500'}`}>
+            <div className={`p-2.5 rounded-xl ${data.netBalance >= 0 ? 'bg-[var(--muted)] text-[var(--green-600)]' : 'bg-[var(--muted)] text-red-500'}`}>
               {data.netBalance >= 0 ? <TrendingUp size={18} /> : <TrendingDown size={18} />}
             </div>
             <span className="text-xs font-bold text-[var(--muted-foreground)] uppercase">Balanço</span>
@@ -195,8 +195,8 @@ export default function Dashboard() {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {data.accounts.length === 0 && (
-            <div className="col-span-full bg-white p-8 rounded-2xl border border-[var(--border)] text-center">
-              <div className="w-16 h-16 bg-[var(--blue-50)] rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <div className="col-span-full bg-[var(--card)] p-8 rounded-2xl border border-[var(--border)] text-center">
+              <div className="w-16 h-16 bg-[var(--muted)] rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <Landmark size={28} className="text-[var(--blue-500)]" />
               </div>
               <p className="text-[var(--foreground)] font-medium mb-1">Nenhuma conta conectada</p>
@@ -207,7 +207,7 @@ export default function Dashboard() {
             </div>
           )}
           {data.accounts.map(acc => (
-            <div key={acc.id} className="bg-white p-5 rounded-2xl border border-[var(--border)] hover:shadow-md transition-shadow">
+            <div key={acc.id} className="bg-[var(--card)] p-5 rounded-2xl border border-[var(--border)] hover:shadow-md transition-shadow">
               <div className="flex items-center gap-3 mb-3">
                 <div
                   className="w-3 h-3 rounded-full"
@@ -231,7 +231,7 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Expense by Category */}
-        <section className="bg-white p-6 rounded-2xl border border-[var(--border)]">
+        <section className="bg-[var(--card)] p-6 rounded-2xl border border-[var(--border)]">
           <h2 className="text-sm font-black text-[var(--blue-500)] uppercase tracking-widest mb-4">Despesas por Categoria</h2>
           {data.expensesByCategory.length === 0 ? (
             <div className="text-center py-8">
@@ -263,9 +263,10 @@ export default function Dashboard() {
                     contentStyle={{
                       borderRadius: '12px',
                       border: '1px solid var(--border)',
-                      background: '#fff',
+                      background: 'var(--card)',
+                      color: 'var(--foreground)',
                       fontSize: '12px',
-                      boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+                      boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.3)',
                     }}
                   />
                   <Legend
@@ -291,7 +292,7 @@ export default function Dashboard() {
         </section>
 
         {/* Budgets */}
-        <section className="bg-white p-6 rounded-2xl border border-[var(--border)]">
+        <section className="bg-[var(--card)] p-6 rounded-2xl border border-[var(--border)]">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm font-black text-[var(--blue-500)] uppercase tracking-widest">Orçamentos</h2>
             <Link href="/budgets" className="text-xs font-bold text-[var(--blue-600)] hover:text-[var(--blue-700)] transition-colors">Ver todos</Link>
@@ -335,7 +336,7 @@ export default function Dashboard() {
       </div>
 
       {/* Recent Transactions */}
-      <section className="bg-white p-6 rounded-2xl border border-[var(--border)]">
+      <section className="bg-[var(--card)] p-6 rounded-2xl border border-[var(--border)]">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-sm font-black text-[var(--blue-500)] uppercase tracking-widest">Últimas Transações</h2>
           <Link href="/transactions" className="text-xs font-bold text-[var(--blue-600)] hover:text-[var(--blue-700)] transition-colors">Ver todas</Link>
