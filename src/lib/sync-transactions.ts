@@ -1,3 +1,4 @@
+import { PrismaClient } from '@prisma/client'
 import { getBankAccounts } from './finance-service'
 import { getTransactions } from './pluggy'
 
@@ -11,7 +12,7 @@ function parseTxDate(tx: Record<string, unknown>): Date {
 }
 
 async function upsertTransaction(
-  prisma: Awaited<ReturnType<typeof import('./prisma').then(m => m.prisma)>>,
+  prisma: PrismaClient,
   tx: Record<string, unknown>,
   bankAccountId: string,
   userId: string,
