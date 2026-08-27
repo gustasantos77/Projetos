@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Landmark, Trash2, RefreshCw, Plug } from 'lucide-react'
+import BankIcon, { getInstitutionLabel } from './BankIcon'
 
 declare global {
   interface Window {
@@ -23,14 +24,6 @@ interface BankAccount {
   type: string
   balance: number | null
   lastSyncAt: string | null
-}
-
-const INSTITUTION_COLORS: Record<string, string> = {
-  'Nubank': '#820AD1',
-  'Itaú': '#EC7000',
-  'Inter': '#FF7A00',
-  'PicPay': '#22c55e',
-  'Banco do Brasil': '#2563eb',
 }
 
 function getTimeSince(date: Date): string {
@@ -218,13 +211,10 @@ export default function SettingsPanel() {
             {accounts.map(acc => (
               <div key={acc.id} className="flex items-center justify-between p-4 rounded-xl border border-[var(--border)] hover:bg-[var(--muted)]/50 transition-colors">
                 <div className="flex items-center gap-3">
-                  <div
-                    className="w-3 h-3 rounded-full"
-                    style={{ backgroundColor: INSTITUTION_COLORS[acc.institution] ?? '#6b7280' }}
-                  />
+                  <BankIcon institution={acc.institution} size={32} />
                   <div>
                     <p className="text-sm font-bold">{acc.name}</p>
-                    <p className="text-[10px] text-[var(--muted-foreground)]">{acc.institution} · {acc.type}</p>
+                    <p className="text-[10px] text-[var(--muted-foreground)]">{getInstitutionLabel(acc.institution)} · {acc.type}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">

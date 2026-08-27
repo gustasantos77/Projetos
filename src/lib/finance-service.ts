@@ -230,8 +230,8 @@ export async function getDashboardStats(userId: string, month?: number, year?: n
   })
 
   const futureNetEffect = futureTransactions.reduce((sum, t) => {
-    if (t.type === 'INCOME') return sum + Number(t.amount)
-    if (t.type === 'EXPENSE') return sum - Number(t.amount)
+    if (t.type === 'INCOME') return sum - Number(t.amount)
+    if (t.type === 'EXPENSE') return sum + Number(t.amount)
     return sum
   }, 0)
 

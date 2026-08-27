@@ -6,6 +6,7 @@ import { Wallet, TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, AlertTr
 import Link from 'next/link'
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts'
 import TransactionForm from './TransactionForm'
+import BankIcon, { getInstitutionLabel } from './BankIcon'
 
 interface DashboardData {
   totalBalance: number
@@ -39,14 +40,6 @@ interface DashboardData {
     category: { name: string; color: string | null } | null
     bankAccount: { name: string } | null
   }>
-}
-
-const INSTITUTION_COLORS: Record<string, string> = {
-  'Nubank': '#820AD1',
-  'Itaú': '#EC7000',
-  'Inter': '#FF7A00',
-  'PicPay': '#22c55e',
-  'Banco do Brasil': '#2563eb',
 }
 
 function getTimeSince(date: Date): string {
@@ -223,11 +216,8 @@ export default function Dashboard() {
           {data.accounts.map(acc => (
             <div key={acc.id} className="bg-[var(--card)] p-5 rounded-2xl border border-[var(--border)] hover:shadow-md transition-shadow">
               <div className="flex items-center gap-3 mb-3">
-                <div
-                  className="w-3 h-3 rounded-full"
-                  style={{ backgroundColor: INSTITUTION_COLORS[acc.institution] ?? '#6b7280' }}
-                />
-                <span className="text-xs font-bold text-[var(--muted-foreground)]">{acc.institution}</span>
+                <BankIcon institution={acc.institution} size={32} />
+                <span className="text-xs font-bold text-[var(--muted-foreground)]">{getInstitutionLabel(acc.institution)}</span>
               </div>
               <p className="text-sm font-bold truncate">{acc.name}</p>
               <p className="text-lg font-black mt-1">{formatCurrency(acc.balance ?? 0)}</p>

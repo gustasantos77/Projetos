@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { formatCurrency, formatDate, toNumber } from '@/lib/helpers'
 import { CreditCard, TrendingDown, TrendingUp, ChevronLeft, ChevronRight } from 'lucide-react'
+import BankIcon, { getInstitutionColor, getInstitutionLabel } from './BankIcon'
 
 interface CreditCardData {
   account: {
@@ -25,14 +26,6 @@ interface CreditCardData {
   totalPayments: number
   currentBalance: number
   transactionCount: number
-}
-
-const INSTITUTION_COLORS: Record<string, string> = {
-  'Nubank': '#820AD1',
-  'Itaú': '#EC7000',
-  'Inter': '#FF7A00',
-  'PicPay': '#22c55e',
-  'Banco do Brasil': '#2563eb',
 }
 
 export default function CreditCardView() {
@@ -77,14 +70,18 @@ export default function CreditCardView() {
   }
 
   const { account, transactions, totalExpenses, totalInvoice, totalPayments, currentBalance, transactionCount } = data
-  const color = INSTITUTION_COLORS[account.institution] ?? '#6b7280'
+  const color = getInstitutionColor(account.institution)
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-4">
-        <div>
-          <h2 className="text-xs font-black text-[var(--blue-500)] uppercase tracking-widest mb-1">Cartão de Crédito</h2>
-          <h1 className="text-3xl font-black text-[var(--foreground)] tracking-tight">{account.name}</h1>
+        <div className="flex items-center gap-3">
+          <BankIcon institution={account.institution} size={40} />
+          <div>
+            <h2 className="text-xs font-black text-[var(--blue-500)] uppercase tracking-widest mb-1">Cartão de Crédito</h2>
+            <h1 className="text-3xl font-black text-[var(--foreground)] tracking-tight">{account.name}</h1>
+            <p className="text-xs text-[var(--muted-foreground)]">{getInstitutionLabel(account.institution)}</p>
+          </div>
         </div>
         <div className="flex items-center gap-2">
           <button
