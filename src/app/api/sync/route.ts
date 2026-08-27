@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAuth } from '@/lib/auth'
 import { getBankAccounts, createBankAccount, deleteBankAccount } from '@/lib/finance-service'
-import { getAccounts, getItem, getTransactions } from '@/lib/pluggy'
+import { getAccounts, getItem, createWebhook } from '@/lib/pluggy'
+import { syncTransactionsForUser } from '@/lib/sync-transactions'
 import { validateRequest, syncActionSchema } from '@/lib/validations'
 
 export async function GET() {
@@ -57,72 +58,23 @@ export async function POST(req: NextRequest) {
         }
       }
 
+      const baseUrl = process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : process.env.NEXTAUTH_URL || 'http://localhost:3002'
+      const webhookUrl = `${baseUrl}/api/webhooks/pluggy`
+
+      try {
+        await createWebhook(webhookUrl, 'item/updated')
+        await createWebhook(webhookUrl, 'transactions/created')
+      } catch (e) {
+        console.warn('[sync] webhook registration failed (may already exist):', (e as Error).message)
+      }
+
       return NextResponse.json({ accounts: created })
     }
 
     if (action === 'sync') {
-      const { prisma } = await import('@/lib/prisma')
-      const bankAccounts = await getBankAccounts(userId)
-      let imported = 0
-
-      for (const account of bankAccounts) {
-        if (!account.pluggyAccountId) continue
-
-        const transactions = await getTransactions(account.pluggyAccountId)
-        const isCreditCard = String(account.type).toUpperCase().includes('CREDIT')
-
-        for (const tx of transactions.results) {
-          if (!tx.id) continue
-
-          const amount = Number(tx.amount ?? 0)
-          const type = isCreditCard
-            ? amount >= 0 ? 'EXPENSE' : 'INCOME'
-            : tx.type === 'CREDIT' ? 'INCOME' : 'EXPENSE'
-
-          const rawDate = (tx as Record<string, unknown>).dateTime
-            ?? (tx as Record<string, unknown>).date
-            ?? (tx as Record<string, unknown>).postDate
-
-          let txDate: Date
-          if (rawDate != null && rawDate !== '') {
-            const parsed = Date.parse(String(rawDate))
-            txDate = isNaN(parsed) ? new Date() : new Date(parsed)
-          } else {
-            txDate = new Date()
-          }
-
-          const desc = tx.description ?? tx.descriptionRaw ?? 'Transação bancária'
-          const amt = Math.abs(amount)
-          console.log('[sync] rawDate:', rawDate, '| type:', typeof rawDate, '| txDate:', txDate.toISOString())
-
-          await prisma.transaction.upsert({
-            where: { pluggyId: tx.id },
-            update: {
-              description: desc,
-              amount: amt,
-              type,
-              date: txDate,
-              bankAccountId: account.id,
-            },
-            create: {
-              userId,
-              bankAccountId: account.id,
-              pluggyId: tx.id,
-              description: desc,
-              amount: amt,
-              type,
-              date: txDate,
-            },
-          })
-          imported++
-        }
-
-        await prisma.bankAccount.update({
-          where: { id: account.id },
-          data: { lastSyncAt: new Date() },
-        })
-      }
-
+      const imported = await syncTransactionsForUser(userId)
       return NextResponse.json({ imported })
     }
 

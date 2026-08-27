@@ -79,3 +79,18 @@ export async function getTransactions(accountId: string, dateFrom?: string, date
 
   return { results }
 }
+
+export async function createWebhook(url: string, event: string) {
+  return pluggyFetch('/webhooks', {
+    method: 'POST',
+    body: JSON.stringify({ url, event }),
+  })
+}
+
+export async function listWebhooks() {
+  return pluggyFetch('/webhooks')
+}
+
+export async function deleteWebhook(webhookId: string) {
+  return pluggyFetch(`/webhooks/${webhookId}`, { method: 'DELETE' })
+}

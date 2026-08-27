@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { formatCurrency, formatMonth, toNumber } from '@/lib/helpers'
 import { Wallet, TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, AlertTriangle, RefreshCw, Plus, Landmark, ChevronLeft, ChevronRight, PieChart as PieChartIcon } from 'lucide-react'
 import Link from 'next/link'
@@ -68,7 +68,7 @@ export default function Dashboard() {
   const [month, setMonth] = useState(now.getMonth() + 1)
   const [year, setYear] = useState(now.getFullYear())
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true)
     setData(null)
     try {
@@ -77,9 +77,23 @@ export default function Dashboard() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [month, year])
 
   useEffect(() => { fetchData() }, [month, year])
+
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      try {
+        await fetch('/api/sync', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'sync' }),
+        })
+        await fetchData()
+      } catch {}
+    }, 5 * 60 * 1000)
+    return () => clearInterval(interval)
+  }, [month, year, fetchData])
 
   const handleSync = async () => {
     setSyncing(true)
