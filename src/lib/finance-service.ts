@@ -217,7 +217,9 @@ export async function getDashboardStats(userId: string, month?: number, year?: n
     }),
   ])
 
-  const currentTotalBalance = accounts.reduce((sum, acc) => sum + Number(acc.balance ?? 0), 0)
+  const currentTotalBalance = accounts
+    .filter(acc => !String(acc.type).toUpperCase().includes('CREDIT'))
+    .reduce((sum, acc) => sum + Number(acc.balance ?? 0), 0)
 
   const futureTransactions = await prisma.transaction.findMany({
     where: {
