@@ -79,23 +79,39 @@ export async function POST(req: NextRequest) {
             ? amount >= 0 ? 'EXPENSE' : 'INCOME'
             : tx.type === 'CREDIT' ? 'INCOME' : 'EXPENSE'
 
+          const rawDate = (tx as Record<string, unknown>).dateTime
+            ?? (tx as Record<string, unknown>).date
+            ?? (tx as Record<string, unknown>).postDate
+
+          let txDate: Date
+          if (rawDate != null && rawDate !== '') {
+            const parsed = Date.parse(String(rawDate))
+            txDate = isNaN(parsed) ? new Date() : new Date(parsed)
+          } else {
+            txDate = new Date()
+          }
+
+          const desc = tx.description ?? tx.descriptionRaw ?? 'Transação bancária'
+          const amt = Math.abs(amount)
+          console.log('[sync] rawDate:', rawDate, '| type:', typeof rawDate, '| txDate:', txDate.toISOString())
+
           await prisma.transaction.upsert({
             where: { pluggyId: tx.id },
             update: {
-              description: tx.description ?? tx.descriptionRaw ?? 'Transação bancária',
-              amount: Math.abs(amount),
+              description: desc,
+              amount: amt,
               type,
-              date: new Date(tx.date + 'T12:00:00'),
+              date: txDate,
               bankAccountId: account.id,
             },
             create: {
               userId,
               bankAccountId: account.id,
               pluggyId: tx.id,
-              description: tx.description ?? tx.descriptionRaw ?? 'Transação bancária',
-              amount: Math.abs(amount),
+              description: desc,
+              amount: amt,
               type,
-              date: new Date(tx.date + 'T12:00:00'),
+              date: txDate,
             },
           })
           imported++
