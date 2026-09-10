@@ -85,6 +85,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true })
     }
 
+    if (action === 'create-manual') {
+      const { name, institution, type: accType } = body as { name?: string; institution?: string; type?: string }
+      if (!name || !institution) return NextResponse.json({ error: 'name e institution obrigatórios' }, { status: 400 })
+      const account = await createBankAccount(userId, {
+        name,
+        institution,
+        type: accType || 'CHECKING',
+      })
+      return NextResponse.json(account)
+    }
+
     return NextResponse.json({ error: 'Ação desconhecida' }, { status: 400 })
   } catch (error) {
     return NextResponse.json({ error: (error as Error).message }, { status: 500 })

@@ -1,8 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { X, TrendingUp, TrendingDown, ArrowLeftRight, Check, Pencil, Trash2 } from 'lucide-react'
+import { X, TrendingUp, TrendingDown, ArrowLeftRight, Check, Pencil, Trash2, Plus } from 'lucide-react'
 import { getCategoryIcon } from '@/lib/category-icons'
+import { getInstitutionColor, getInstitutionLabel } from '@/components/BankIcon'
+
+const BANK_OPTIONS = [
+  'Banco do Brasil', 'Nubank', 'Itaú', 'Inter', 'PicPay',
+]
 
 interface Category {
   id: string
@@ -55,6 +60,9 @@ export default function TransactionForm({ onSuccess, editTransaction, onCloseEdi
   const [bankAccountId, setBankAccountId] = useState('')
   const [notes, setNotes] = useState('')
   const [error, setError] = useState('')
+
+  const [showBankForm, setShowBankForm] = useState(false)
+  const [newBankInstitution, setNewBankInstitution] = useState('')
 
   const isEditing = !!editTransaction
 
@@ -119,7 +127,7 @@ export default function TransactionForm({ onSuccess, editTransaction, onCloseEdi
       const url = '/api/transactions'
       const method = isEditing ? 'PUT' : 'POST'
       const body = isEditing
-        ? { id: editTransaction!.id, description: description.trim(), amount: parseFloat(amount), type, date, categoryId: categoryId || undefined, notes: notes.trim() || undefined }
+        ? { id: editTransaction!.id, description: description.trim(), amount: parseFloat(amount), type, date, categoryId: categoryId || undefined, bankAccountId: bankAccountId || undefined, notes: notes.trim() || undefined }
         : { description: description.trim(), amount: parseFloat(amount), type, date, categoryId: categoryId || undefined, bankAccountId: bankAccountId || undefined, notes: notes.trim() || undefined }
 
       const res = await fetch(url, {
@@ -155,6 +163,25 @@ export default function TransactionForm({ onSuccess, editTransaction, onCloseEdi
       setError('Erro ao excluir transação')
     } finally {
       setSaving(false)
+    }
+  }
+
+  const handleCreateBank = async () => {
+    if (!newBankInstitution) return
+    try {
+      const res = await fetch('/api/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'create-manual', name: newBankInstitution, institution: newBankInstitution }),
+      })
+      if (!res.ok) throw new Error('Erro ao criar banco')
+      const account = await res.json()
+      setAccounts(prev => [...prev, account])
+      setBankAccountId(account.id)
+      setNewBankInstitution('')
+      setShowBankForm(false)
+    } catch {
+      setError('Erro ao criar banco')
     }
   }
 
@@ -291,22 +318,93 @@ export default function TransactionForm({ onSuccess, editTransaction, onCloseEdi
                 )}
               </div>
 
-              {/* Bank Account (só na criação) */}
-              {!isEditing && accounts.length > 0 && (
-                <div>
-                  <label className="block text-xs font-bold text-[var(--muted-foreground)] uppercase tracking-wider mb-2">Conta</label>
-                  <select
-                    value={bankAccountId}
-                    onChange={e => setBankAccountId(e.target.value)}
-                    className="w-full px-4 py-3 border border-[var(--border)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--blue-500)] transition-all bg-[var(--card)]"
+              {/* Bank Account */}
+              <div>
+                <label className="block text-xs font-bold text-[var(--muted-foreground)] uppercase tracking-wider mb-2">Conta Bancária</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setBankAccountId('')}
+                    className={`flex items-center gap-2 py-3 px-3 rounded-xl border-2 transition-all ${
+                      bankAccountId === ''
+                        ? 'border-[var(--blue-600)] bg-[var(--blue-600)]/10 text-[var(--blue-600)]'
+                        : 'border-[var(--border)] text-[var(--muted-foreground)] hover:border-[var(--blue-400)]'
+                    }`}
                   >
-                    <option value="">Sem conta vinculada</option>
-                    {accounts.map(acc => (
-                      <option key={acc.id} value={acc.id}>{acc.name} ({acc.institution})</option>
-                    ))}
-                  </select>
+                    <div className="w-3 h-3 rounded-full bg-[var(--muted-foreground)]/30" />
+                    <span className="text-xs font-bold truncate">Sem conta</span>
+                  </button>
+                  {accounts.map(acc => {
+                    const bankColor = getInstitutionColor(acc.institution)
+                    return (
+                      <button
+                        key={acc.id}
+                        type="button"
+                        onClick={() => setBankAccountId(acc.id)}
+                        className={`flex items-center gap-2 py-3 px-3 rounded-xl border-2 transition-all ${
+                          bankAccountId === acc.id
+                            ? 'border-[var(--blue-600)] bg-[var(--blue-600)]/10'
+                            : 'border-[var(--border)] hover:border-[var(--blue-400)]'
+                        }`}
+                      >
+                        <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: bankColor }} />
+                        <div className="min-w-0 text-left">
+                          <span className="text-xs font-bold block truncate">{getInstitutionLabel(acc.institution)}</span>
+                          <span className="text-[10px] text-[var(--muted-foreground)] block truncate">{acc.name}</span>
+                        </div>
+                      </button>
+                    )
+                  })}
+                  <button
+                    type="button"
+                    onClick={() => setShowBankForm(!showBankForm)}
+                    className="flex items-center gap-2 py-3 px-3 rounded-xl border-2 border-dashed border-[var(--border)] text-[var(--muted-foreground)] hover:border-[var(--blue-400)] hover:text-[var(--blue-600)] transition-all"
+                  >
+                    <Plus size={14} />
+                    <span className="text-xs font-bold">Adicionar banco</span>
+                  </button>
                 </div>
-              )}
+
+                {showBankForm && (
+                  <div className="mt-3 p-3 bg-[var(--muted)] rounded-xl space-y-3">
+                    <p className="text-xs font-bold text-[var(--muted-foreground)]">Selecione o banco</p>
+                    <div className="grid grid-cols-3 gap-1.5">
+                      {BANK_OPTIONS.map(bank => (
+                        <button
+                          key={bank}
+                          type="button"
+                          onClick={() => setNewBankInstitution(bank)}
+                          className={`flex items-center gap-1.5 py-2 px-2 rounded-lg border transition-all text-left ${
+                            newBankInstitution === bank
+                              ? 'border-[var(--blue-600)] bg-[var(--blue-600)]/10'
+                              : 'border-[var(--border)] hover:border-[var(--blue-400)]'
+                          }`}
+                        >
+                          <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: getInstitutionColor(bank) }} />
+                          <span className="text-[10px] font-bold truncate">{bank}</span>
+                        </button>
+                      ))}
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => { setShowBankForm(false); setNewBankInstitution('') }}
+                        className="flex-1 py-2 text-xs font-bold rounded-lg border border-[var(--border)] hover:bg-[var(--muted)] transition-colors"
+                      >
+                        Cancelar
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleCreateBank}
+                        disabled={!newBankInstitution}
+                        className="flex-1 py-2 text-xs font-bold rounded-lg bg-[var(--blue-600)] text-white hover:bg-[var(--blue-700)] disabled:opacity-50 transition-colors"
+                      >
+                        Adicionar
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
 
               {/* Notes */}
               <div>

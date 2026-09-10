@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, ArrowLeftRight, CreditCard, PieChart, Repeat, Settings, LogOut } from 'lucide-react'
+import { LayoutDashboard, ArrowLeftRight, CreditCard, PieChart, Repeat, Tag, Settings, LogOut } from 'lucide-react'
 import { clsx } from 'clsx'
 import { signOut } from 'next-auth/react'
 
@@ -12,6 +12,7 @@ const tabs = [
   { href: '/credit-card', label: 'Cartão', icon: CreditCard },
   { href: '/budgets', label: 'Orçamentos', icon: PieChart },
   { href: '/recurring', label: 'Recorrentes', icon: Repeat },
+  { href: '/categories', label: 'Categorias', icon: Tag },
   { href: '/settings', label: 'Configurações', icon: Settings },
 ]
 

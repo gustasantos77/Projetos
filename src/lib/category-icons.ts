@@ -19,6 +19,9 @@ import {
   PawPrint,
   Baby,
   Wrench,
+  CreditCard,
+  Landmark,
+  AlertTriangle,
   type LucideIcon,
 } from 'lucide-react'
 
@@ -43,6 +46,9 @@ const ICON_MAP: Record<string, LucideIcon> = {
   PawPrint,
   Baby,
   Wrench,
+  CreditCard,
+  Landmark,
+  AlertTriangle,
 }
 
 export function getCategoryIcon(iconName: string | null): LucideIcon {

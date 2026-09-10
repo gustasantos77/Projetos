@@ -2,10 +2,22 @@ import { prisma } from './prisma'
 
 // === BANK ACCOUNTS ===
 export async function getBankAccounts(userId: string) {
-  return prisma.bankAccount.findMany({
+  const accounts = await prisma.bankAccount.findMany({
     where: { userId },
-    include: { transactions: { orderBy: { date: 'desc' }, take: 1 } },
+    include: { transactions: true },
     orderBy: { createdAt: 'desc' },
+  })
+
+  return accounts.map(acc => {
+    if (!acc.pluggyAccountId) {
+      const computedBalance = acc.transactions.reduce((sum, tx) => {
+        if (tx.type === 'INCOME') return sum + Number(tx.amount)
+        if (tx.type === 'EXPENSE') return sum - Number(tx.amount)
+        return sum
+      }, 0)
+      return { ...acc, balance: computedBalance }
+    }
+    return acc
   })
 }
 
@@ -13,7 +25,7 @@ export async function createBankAccount(userId: string, data: {
   name: string
   type: string
   institution: string
-  pluggyItemId: string
+  pluggyItemId?: string | null
   pluggyAccountId?: string
   balance?: number
 }) {
@@ -203,13 +215,13 @@ export async function getDashboardStats(userId: string, month?: number, year?: n
   const end = new Date(y, m, 0, 23, 59, 59)
 
   const [accounts, monthTransactions, budgets] = await Promise.all([
-    prisma.bankAccount.findMany({ where: { userId } }),
+    getBankAccounts(userId),
     prisma.transaction.findMany({
       where: {
         userId,
         date: { gte: start, lte: end },
       },
-      include: { category: true },
+      include: { category: true, bankAccount: true },
     }),
     prisma.budget.findMany({
       where: { userId, month: m, year: y },

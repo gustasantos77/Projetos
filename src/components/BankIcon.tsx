@@ -4,7 +4,7 @@ const INSTITUTION_COLORS: Record<string, string> = {
   'Itaú': '#EC7000',
   'Inter': '#FF7A00',
   'PicPay': '#22c55e',
-  'Banco do Brasil': '#2563eb',
+  'Banco do Brasil': '#F59E0B',
 }
 
 const INSTITUTION_LABELS: Record<string, string> = {

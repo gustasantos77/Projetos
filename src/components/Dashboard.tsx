@@ -6,7 +6,7 @@ import { Wallet, TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, AlertTr
 import Link from 'next/link'
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts'
 import TransactionForm from './TransactionForm'
-import BankIcon, { getInstitutionLabel } from './BankIcon'
+import BankIcon, { getInstitutionLabel, getInstitutionColor } from './BankIcon'
 
 interface DashboardData {
   totalBalance: number
@@ -38,7 +38,7 @@ interface DashboardData {
     type: string
     date: string
     category: { name: string; color: string | null } | null
-    bankAccount: { name: string } | null
+    bankAccount: { name: string; institution: string } | null
   }>
 }
 
@@ -220,7 +220,7 @@ export default function Dashboard() {
                 <span className="text-xs font-bold text-[var(--muted-foreground)]">{getInstitutionLabel(acc.institution)}</span>
               </div>
               <p className="text-sm font-bold truncate">{acc.name}</p>
-              <p className="text-lg font-black mt-1">{formatCurrency(acc.balance ?? 0)}</p>
+              <p className={`text-lg font-black mt-1 ${(acc.balance ?? 0) >= 0 ? 'text-[var(--green-600)]' : 'text-red-500'}`}>{formatCurrency(acc.balance ?? 0)}</p>
               {acc.lastSyncAt ? (
                 <p className="text-[10px] text-[var(--muted-foreground)] mt-2">
                   Sync: {getTimeSince(new Date(acc.lastSyncAt))}
@@ -357,13 +357,25 @@ export default function Dashboard() {
             {data.recentTransactions.map(tx => (
               <div key={tx.id} className="flex items-center justify-between py-3">
                 <div className="flex items-center gap-3">
-                  <div className={`p-2 rounded-xl ${tx.type === 'INCOME' ? 'bg-[var(--green-50)] text-[var(--green-600)]' : 'bg-red-50 text-red-500'}`}>
-                    {tx.type === 'INCOME' ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
-                  </div>
+                  {tx.bankAccount ? (
+                    <div className="p-2 rounded-xl bg-[var(--muted)]">
+                      <BankIcon institution={tx.bankAccount.institution} size={32} />
+                    </div>
+                  ) : (
+                    <div className={`p-2 rounded-xl ${tx.type === 'INCOME' ? 'bg-[var(--green-50)] text-[var(--green-600)]' : 'bg-red-50 text-red-500'}`}>
+                      {tx.type === 'INCOME' ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
+                    </div>
+                  )}
                   <div>
                     <p className="text-sm font-bold truncate max-w-[200px] sm:max-w-none">{tx.description}</p>
                     <p className="text-[10px] text-[var(--muted-foreground)]">
-                      {tx.category?.name ?? 'Sem categoria'} {tx.bankAccount ? `· ${tx.bankAccount.name}` : ''}
+                      {tx.category?.name ?? 'Sem categoria'}
+                      {tx.bankAccount && (
+                        <>
+                          <span> · </span>
+                          <span>{tx.bankAccount.name}</span>
+                        </>
+                      )}
                     </p>
                   </div>
                 </div>

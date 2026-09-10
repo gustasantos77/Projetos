@@ -28,7 +28,7 @@ model BankAccount {
   name            String
   type            String
   institution     String
-  pluggyItemId    String
+  pluggyItemId    String?
   pluggyAccountId String?       @unique
   balance         Decimal       @default(0) @db.Decimal(12, 2)
   lastSyncAt      DateTime?

@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react'
 import { formatCurrency, formatDate, toNumber } from '@/lib/helpers'
 import { TrendingUp, TrendingDown, Search, X, ChevronLeft, ChevronRight, Download, Pencil } from 'lucide-react'
 import TransactionForm, { type TransactionData } from './TransactionForm'
+import { getInstitutionColor } from '@/components/BankIcon'
+import BankIcon from '@/components/BankIcon'
 
 interface Transaction {
   id: string
@@ -11,8 +13,8 @@ interface Transaction {
   amount: { toNumber(): number }
   type: string
   date: string
-  category: { name: string; color: string | null } | null
-  bankAccount: { name: string; institution: string } | null
+  category: { id: string; name: string; color: string | null } | null
+  bankAccount: { id: string; name: string; institution: string } | null
   isRecurring: boolean
 }
 
@@ -76,8 +78,8 @@ export default function TransactionList() {
       amount: toNumber(tx.amount),
       type: tx.type,
       date: tx.date,
-      categoryId: null,
-      bankAccountId: null,
+      categoryId: tx.category?.id ?? null,
+      bankAccountId: tx.bankAccount?.id ?? null,
       notes: null,
     })
   }
@@ -170,15 +172,26 @@ export default function TransactionList() {
           {transactions.map(tx => (
             <div key={tx.id} className="flex items-center justify-between p-4 hover:bg-[var(--muted)]/50 transition-colors group">
               <div className="flex items-center gap-3 flex-1 min-w-0">
-                <div className={`p-2.5 rounded-xl ${tx.type === 'INCOME' ? 'bg-[var(--green-50)] text-[var(--green-600)]' : 'bg-red-50 text-red-500'}`}>
-                  {tx.type === 'INCOME' ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
-                </div>
+                {tx.bankAccount ? (
+                  <div className="p-2.5 rounded-xl bg-[var(--muted)]">
+                    <BankIcon institution={tx.bankAccount.institution} size={32} />
+                  </div>
+                ) : (
+                  <div className={`p-2.5 rounded-xl ${tx.type === 'INCOME' ? 'bg-[var(--green-50)] text-[var(--green-600)]' : 'bg-red-50 text-red-500'}`}>
+                    {tx.type === 'INCOME' ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
+                  </div>
+                )}
                 <div className="min-w-0">
                   <p className="text-sm font-bold truncate">{tx.description}</p>
-                  <p className="text-[10px] text-[var(--muted-foreground)]">
+                  <p className="text-[10px] text-[var(--muted-foreground)] flex items-center gap-1">
                     {tx.category?.name ?? 'Sem categoria'}
-                    {tx.bankAccount ? ` · ${tx.bankAccount.name}` : ''}
-                    {tx.isRecurring ? ' · Recorrente' : ''}
+                    {tx.bankAccount && (
+                      <>
+                        <span>·</span>
+                        <span>{tx.bankAccount.name}</span>
+                      </>
+                    )}
+                    {tx.isRecurring && <><span>·</span>Recorrente</>}
                   </p>
                 </div>
               </div>

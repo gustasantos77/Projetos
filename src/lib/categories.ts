@@ -10,6 +10,9 @@ export const DEFAULT_CATEGORIES = [
   { name: 'Serviços', type: 'EXPENSE', icon: 'Wrench', color: '#6366F1', keywords: ['academia', 'salao', 'barbeiro', 'lavanderia', 'conserto', 'manutencao'] },
   { name: 'Impostos', type: 'EXPENSE', icon: 'FileText', color: '#64748B', keywords: ['imposto', 'taxa', 'darf', 'ipva', 'iptu', 'tributo'] },
   { name: 'Transferência', type: 'EXPENSE', icon: 'ArrowLeftRight', color: '#94A3B8', keywords: ['transferencia', 'ted', 'doc', 'pix'] },
+  { name: 'Cartão', type: 'EXPENSE', icon: 'CreditCard', color: '#E11D48', keywords: ['cartao', 'credito', 'debito', 'nubelo', 'inter', 'itau', 'bradesco', 'visa', 'mastercard', 'elo'] },
+  { name: 'Empréstimo', type: 'EXPENSE', icon: 'Landmark', color: '#0891B2', keywords: ['emprestimo', 'financiamento', 'parcela', 'consignado', 'pessoal'] },
+  { name: 'Cheque Especial', type: 'EXPENSE', icon: 'AlertTriangle', color: '#DC2626', keywords: ['cheque especial', 'chequespec', 'capital de giro', 'overdraft'] },
   // Receitas
   { name: 'Salário', type: 'INCOME', icon: 'Banknote', color: '#10B981', keywords: ['salario', 'vencimento', 'folha de pagamento'] },
   { name: 'Freelance', type: 'INCOME', icon: 'Briefcase', color: '#3B82F6', keywords: ['freelance', 'projeto', 'consultoria', 'servico'] },

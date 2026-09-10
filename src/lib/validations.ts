@@ -40,6 +40,7 @@ export const updateTransactionSchema = z.object({
   type: z.enum(['INCOME', 'EXPENSE', 'TRANSFER']).optional(),
   date: z.string().refine((val) => !isNaN(Date.parse(val)), 'Data inválida').optional(),
   categoryId: z.string().optional(),
+  bankAccountId: z.string().optional(),
   notes: z.string().max(500).optional(),
 })
 
@@ -75,7 +76,7 @@ export const createRecurringSchema = z.object({
 })
 
 export const syncActionSchema = z.object({
-  action: z.enum(['connect', 'add', 'sync', 'delete']),
+  action: z.enum(['connect', 'add', 'sync', 'delete', 'create-manual']),
   itemId: z.string().optional(),
   bankAccountId: z.string().optional(),
 })

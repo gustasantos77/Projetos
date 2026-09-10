@@ -7,6 +7,9 @@ const DEFAULT_CATEGORIES = [
   { name: 'Transporte', type: 'EXPENSE', icon: 'Car', color: '#F97316' },
   { name: 'Lazer', type: 'EXPENSE', icon: 'Gamepad2', color: '#EC4899' },
   { name: 'Contas fixas', type: 'EXPENSE', icon: 'FileText', color: '#8B5CF6' },
+  { name: 'Cartão', type: 'EXPENSE', icon: 'CreditCard', color: '#E11D48' },
+  { name: 'Empréstimo', type: 'EXPENSE', icon: 'Landmark', color: '#0891B2' },
+  { name: 'Cheque Especial', type: 'EXPENSE', icon: 'AlertTriangle', color: '#DC2626' },
   { name: 'Salário', type: 'INCOME', icon: 'Banknote', color: '#10B981' },
   { name: 'Outros', type: 'EXPENSE', icon: 'HelpCircle', color: '#64748B' },
 ]
