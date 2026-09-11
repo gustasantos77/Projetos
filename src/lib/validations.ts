@@ -31,6 +31,8 @@ export const createTransactionSchema = z.object({
   notes: z.string().max(500).optional(),
   isRecurring: z.boolean().optional(),
   recurringId: z.string().optional(),
+  totalInstallments: z.number().int().min(1).max(60).optional(),
+  status: z.enum(['PAID', 'PENDING']).optional(),
 })
 
 export const updateTransactionSchema = z.object({
@@ -42,6 +44,7 @@ export const updateTransactionSchema = z.object({
   categoryId: z.string().optional(),
   bankAccountId: z.string().optional(),
   notes: z.string().max(500).optional(),
+  isRecurring: z.boolean().optional(),
 })
 
 export const createBudgetSchema = z.object({

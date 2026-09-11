@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { X, TrendingUp, TrendingDown, ArrowLeftRight, Check, Pencil, Trash2, Plus } from 'lucide-react'
 import { getCategoryIcon } from '@/lib/category-icons'
 import { getInstitutionColor, getInstitutionLabel } from '@/components/BankIcon'
+import { formatCurrency } from '@/lib/helpers'
 
 const BANK_OPTIONS = [
   'Banco do Brasil', 'Nubank', 'Itaú', 'Inter', 'PicPay',
@@ -32,6 +33,7 @@ export interface TransactionData {
   categoryId?: string | null
   bankAccountId?: string | null
   notes?: string | null
+  isRecurring?: boolean
 }
 
 interface TransactionFormProps {
@@ -59,6 +61,8 @@ export default function TransactionForm({ onSuccess, editTransaction, onCloseEdi
   const [categoryId, setCategoryId] = useState('')
   const [bankAccountId, setBankAccountId] = useState('')
   const [notes, setNotes] = useState('')
+  const [totalInstallments, setTotalInstallments] = useState(1)
+  const [isRecurring, setIsRecurring] = useState(false)
   const [error, setError] = useState('')
 
   const [showBankForm, setShowBankForm] = useState(false)
@@ -75,6 +79,7 @@ export default function TransactionForm({ onSuccess, editTransaction, onCloseEdi
       setCategoryId(editTransaction.categoryId || '')
       setBankAccountId(editTransaction.bankAccountId || '')
       setNotes(editTransaction.notes || '')
+      setIsRecurring(editTransaction.isRecurring || false)
       setOpen(true)
     }
   }, [editTransaction])
@@ -100,6 +105,8 @@ export default function TransactionForm({ onSuccess, editTransaction, onCloseEdi
     setCategoryId('')
     setBankAccountId('')
     setNotes('')
+    setTotalInstallments(1)
+    setIsRecurring(false)
     setError('')
   }
 
@@ -124,17 +131,38 @@ export default function TransactionForm({ onSuccess, editTransaction, onCloseEdi
     setError('')
 
     try {
-      const url = '/api/transactions'
-      const method = isEditing ? 'PUT' : 'POST'
-      const body = isEditing
-        ? { id: editTransaction!.id, description: description.trim(), amount: parseFloat(amount), type, date, categoryId: categoryId || undefined, bankAccountId: bankAccountId || undefined, notes: notes.trim() || undefined }
-        : { description: description.trim(), amount: parseFloat(amount), type, date, categoryId: categoryId || undefined, bankAccountId: bankAccountId || undefined, notes: notes.trim() || undefined }
+      let res
 
-      const res = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      })
+      if (totalInstallments > 1 && !isEditing) {
+        // Create installment transaction
+        res = await fetch('/api/transactions/installments', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            description: description.trim(),
+            amount: parseFloat(amount),
+            type,
+            date,
+            categoryId: categoryId || undefined,
+            bankAccountId: bankAccountId || undefined,
+            notes: notes.trim() || undefined,
+            totalInstallments,
+          }),
+        })
+      } else {
+        // Create single transaction
+        const url = '/api/transactions'
+        const method = isEditing ? 'PUT' : 'POST'
+        const body = isEditing
+          ? { id: editTransaction!.id, description: description.trim(), amount: parseFloat(amount), type, date, categoryId: categoryId || undefined, bankAccountId: bankAccountId || undefined, notes: notes.trim() || undefined, isRecurring }
+          : { description: description.trim(), amount: parseFloat(amount), type, date, categoryId: categoryId || undefined, bankAccountId: bankAccountId || undefined, notes: notes.trim() || undefined }
+
+        res = await fetch(url, {
+          method,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        })
+      }
 
       if (!res.ok) throw new Error('Erro ao salvar')
 
@@ -285,6 +313,31 @@ export default function TransactionForm({ onSuccess, editTransaction, onCloseEdi
                 />
               </div>
 
+              {/* Installments */}
+              {!isEditing && (
+                <div>
+                  <label className="block text-xs font-bold text-[var(--muted-foreground)] uppercase tracking-wider mb-2">Parcelas</label>
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="number"
+                      min="1"
+                      max="60"
+                      value={totalInstallments}
+                      onChange={e => setTotalInstallments(parseInt(e.target.value) || 1)}
+                      className="w-24 px-4 py-3 border border-[var(--border)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--blue-500)] transition-all text-center font-bold"
+                    />
+                    <span className="text-sm text-[var(--muted-foreground)]">
+                      {totalInstallments === 1 ? 'parcela' : 'parcelas'}
+                      {totalInstallments > 1 && amount && (
+                        <span className="ml-2 text-[var(--blue-600)] font-bold">
+                          total: {formatCurrency(parseFloat(amount) * totalInstallments)}
+                        </span>
+                      )}
+                    </span>
+                  </div>
+                </div>
+              )}
+
               {/* Category - OBRIGATÓRIO */}
               <div>
                 <label className="block text-xs font-bold text-[var(--muted-foreground)] uppercase tracking-wider mb-2">
@@ -417,6 +470,29 @@ export default function TransactionForm({ onSuccess, editTransaction, onCloseEdi
                   className="w-full px-4 py-3 border border-[var(--border)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--blue-500)] transition-all resize-none"
                 />
               </div>
+
+              {/* Recurring Toggle */}
+              {isEditing && (
+                <div className="flex items-center justify-between p-4 bg-[var(--muted)] rounded-xl">
+                  <div>
+                    <p className="text-sm font-bold">Transação Recorrente</p>
+                    <p className="text-xs text-[var(--muted-foreground)]">Marque para incluir nas despesas recorrentes</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIsRecurring(!isRecurring)}
+                    className={`relative w-12 h-6 rounded-full transition-colors ${
+                      isRecurring ? 'bg-[var(--blue-600)]' : 'bg-[var(--muted-foreground)]/30'
+                    }`}
+                  >
+                    <div
+                      className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${
+                        isRecurring ? 'translate-x-6' : 'translate-x-0.5'
+                      }`}
+                    />
+                  </button>
+                </div>
+              )}
 
               {/* Error */}
               {error && (

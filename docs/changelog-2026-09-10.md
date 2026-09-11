@@ -147,6 +147,46 @@ const body = isEditing
 
 ---
 
+## 5. Correção de Bug: Saldo Total com Valor Incorreto
+
+### Problema
+O "Saldo Total" no dashboard estava calculando um valor diferente do esperado. O usuário tinha R$ 5.431 em despesas e nenhuma receita, mas o saldo mostrava valores como -R$ 4.700 e -R$ 6.201,79.
+
+### Causa
+Duas raízes:
+1. **Sinais invertidos no `futureNetEffect`** — Despesas futuras somavam ao saldo e receitas futuras subtraíam (comportamento invertido)
+2. **Transações futuras incluídas no saldo** — O saldo somava o saldo de todas as contas (incluindo transações de outros meses) com o efeito de transações futuras,resultando em um valor que não correspondia ao mês visualizado
+
+### Solução
+O "Saldo Total" agora calcula **apenas receitas - despesas do mês atual**, sem considerar transações futuras:
+
+```typescript
+// ANTES (errado):
+const currentTotalBalance = accounts
+  .filter(acc => !String(acc.type).toUpperCase().includes('CREDIT'))
+  .reduce((sum, acc) => sum + Number(acc.balance ?? 0), 0)
+// + futureNetEffect com sinais invertidos
+
+// AGORA (correto):
+const currentTotalBalance = monthTransactions
+  .filter(t => t.type === 'INCOME')
+  .reduce((sum, t) => sum + Number(t.amount), 0)
+  - monthTransactions
+  .filter(t => t.type === 'EXPENSE')
+  .reduce((sum, t) => sum + Number(t.amount), 0)
+const totalBalance = currentTotalBalance
+```
+
+### Arquivo modificado
+- `src/lib/finance-service.ts` — Função `getDashboardStats()`
+
+### Commits
+- `a355889` — fix: corrigir sinais invertidos no futureNetEffect do saldo total
+- `acf5104` — fix: saldo total agora calcula apenas com transacoes do mes visualizado
+- `c820f1f` — fix: saldo total agora mostra apenas receitas - despesas do mes, sem transacoes futuras
+
+---
+
 ## Pendências
 
 ### Melhorias Futuras

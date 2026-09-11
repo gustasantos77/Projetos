@@ -1,7 +1,7 @@
 import { prisma } from './prisma'
 
 // === BANK ACCOUNTS ===
-export async function getBankAccounts(userId: string) {
+export async function getBankAccounts(userId: string, month?: number, year?: number) {
   const accounts = await prisma.bankAccount.findMany({
     where: { userId },
     include: { transactions: true },
@@ -9,15 +9,21 @@ export async function getBankAccounts(userId: string) {
   })
 
   return accounts.map(acc => {
-    if (!acc.pluggyAccountId) {
-      const computedBalance = acc.transactions.reduce((sum, tx) => {
-        if (tx.type === 'INCOME') return sum + Number(tx.amount)
-        if (tx.type === 'EXPENSE') return sum - Number(tx.amount)
-        return sum
-      }, 0)
-      return { ...acc, balance: computedBalance }
+    let filteredTransactions = acc.transactions
+    if (month && year) {
+      const start = new Date(year, month - 1, 1)
+      const end = new Date(year, month, 0, 23, 59, 59)
+      filteredTransactions = acc.transactions.filter(tx => {
+        const txDate = new Date(tx.date)
+        return txDate >= start && txDate <= end
+      })
     }
-    return acc
+    const computedBalance = filteredTransactions.reduce((sum, tx) => {
+      if (tx.type === 'INCOME') return sum + Number(tx.amount)
+      if (tx.type === 'EXPENSE') return sum - Number(tx.amount)
+      return sum
+    }, 0)
+    return { ...acc, balance: computedBalance }
   })
 }
 
@@ -107,6 +113,7 @@ export async function createTransaction(userId: string, data: {
   isRecurring?: boolean
   recurringId?: string
   notes?: string
+  status?: string
 }) {
   return prisma.transaction.create({
     data: { ...data, userId, amount: data.amount },
@@ -120,7 +127,35 @@ export async function updateTransaction(id: string, data: {
   type?: string
   categoryId?: string
   notes?: string
+  isRecurring?: boolean
 }) {
+  // If marking as recurring, create a Recurring entry if it doesn't have one
+  if (data.isRecurring) {
+    const transaction = await prisma.transaction.findUnique({ where: { id } })
+    if (transaction && !transaction.recurringId) {
+      const recurring = await prisma.recurring.create({
+        data: {
+          userId: transaction.userId,
+          description: transaction.description,
+          amount: Number(transaction.amount),
+          type: transaction.type,
+          frequency: 'MONTHLY',
+          categoryId: transaction.categoryId,
+          isActive: true,
+        },
+      })
+      await prisma.transaction.update({
+        where: { id },
+        data: { ...data, recurringId: recurring.id },
+        include: { category: true },
+      })
+      return prisma.transaction.findUnique({
+        where: { id },
+        include: { category: true },
+      })
+    }
+  }
+
   return prisma.transaction.update({
     where: { id },
     data,
@@ -206,6 +241,119 @@ export async function deleteRecurring(id: string) {
   return prisma.recurring.delete({ where: { id } })
 }
 
+// === PENDING RECURRING TRANSACTIONS ===
+export async function getUnpaidRecurring(userId: string, month: number, year: number) {
+  const start = new Date(year, month - 1, 1)
+  const end = new Date(year, month, 0, 23, 59, 59)
+
+  const activeRecurring = await prisma.recurring.findMany({
+    where: { userId, isActive: true },
+    include: { category: true },
+  })
+
+  const unpaid = []
+
+  for (const rec of activeRecurring) {
+    const paidTransaction = await prisma.transaction.findFirst({
+      where: {
+        userId,
+        recurringId: rec.id,
+        status: 'PAID',
+        date: { gte: start, lte: end },
+      },
+    })
+
+    if (!paidTransaction) {
+      const expectedDate = rec.dayOfMonth
+        ? new Date(year, month - 1, Math.min(rec.dayOfMonth, new Date(year, month, 0).getDate()))
+        : new Date(year, month - 1, 1)
+
+      unpaid.push({
+        id: `unpaid_${rec.id}_${month}_${year}`,
+        description: rec.description,
+        amount: Number(rec.amount),
+        type: rec.type,
+        date: `${year}-${String(month).padStart(2, '0')}-${String(rec.dayOfMonth ?? 1).padStart(2, '0')}`,
+        status: 'PENDING',
+        isRecurring: true,
+        recurringId: rec.id,
+        categoryId: rec.categoryId,
+        category: rec.category,
+        bankAccount: null,
+      })
+    }
+  }
+
+  return unpaid
+}
+
+export async function markTransactionAsPaid(id: string) {
+  return prisma.transaction.update({
+    where: { id },
+    data: { status: 'PAID' },
+    include: { category: true, bankAccount: true },
+  })
+}
+
+export async function markTransactionAsPending(id: string) {
+  return prisma.transaction.update({
+    where: { id },
+    data: { status: 'PENDING' },
+    include: { category: true, bankAccount: true },
+  })
+}
+
+// === INSTALLMENTS ===
+export async function createInstallmentTransaction(userId: string, data: {
+  description: string
+  amount: number
+  type: string
+  date: Date
+  categoryId?: string
+  bankAccountId?: string
+  notes?: string
+  totalInstallments: number
+}) {
+  const installmentGroupId = `installment_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+  const installmentAmount = data.amount // Each installment is the full amount
+
+  const transactions = []
+
+  for (let i = 1; i <= data.totalInstallments; i++) {
+    const installmentDate = new Date(data.date)
+    installmentDate.setMonth(installmentDate.getMonth() + (i - 1))
+
+    const transaction = await prisma.transaction.create({
+      data: {
+        userId,
+        description: `${data.description} (${i}/${data.totalInstallments})`,
+        amount: installmentAmount,
+        type: data.type,
+        date: installmentDate,
+        categoryId: data.categoryId,
+        bankAccountId: data.bankAccountId,
+        notes: data.notes,
+        status: 'PENDING',
+        totalInstallments: data.totalInstallments,
+        currentInstallment: i,
+        installmentGroupId,
+      },
+      include: { category: true, bankAccount: true },
+    })
+    transactions.push(transaction)
+  }
+
+  return transactions
+}
+
+export async function getInstallmentTransactions(userId: string, installmentGroupId: string) {
+  return prisma.transaction.findMany({
+    where: { userId, installmentGroupId },
+    include: { category: true, bankAccount: true },
+    orderBy: { currentInstallment: 'asc' },
+  })
+}
+
 // === DASHBOARD STATS ===
 export async function getDashboardStats(userId: string, month?: number, year?: number) {
   const now = new Date()
@@ -214,8 +362,11 @@ export async function getDashboardStats(userId: string, month?: number, year?: n
   const start = new Date(y, m - 1, 1)
   const end = new Date(y, m, 0, 23, 59, 59)
 
+  // Get unpaid recurring transactions (dynamically calculated)
+  const unpaidRecurring = await getUnpaidRecurring(userId, m, y)
+
   const [accounts, monthTransactions, budgets] = await Promise.all([
-    getBankAccounts(userId),
+    getBankAccounts(userId, m, y),
     prisma.transaction.findMany({
       where: {
         userId,
@@ -279,6 +430,9 @@ export async function getDashboardStats(userId: string, month?: number, year?: n
   // Recent transactions
   const recentTransactions = monthTransactions.slice(0, 10)
 
+  // Pending transactions (unpaid recurring expenses)
+  const pendingTransactions = unpaidRecurring
+
   return {
     totalBalance,
     totalIncome,
@@ -288,6 +442,8 @@ export async function getDashboardStats(userId: string, month?: number, year?: n
     budgetsWithUsage,
     expensesByCategory,
     recentTransactions,
+    pendingTransactions,
     transactionCount: monthTransactions.length,
+    pendingCount: pendingTransactions.length,
   }
 }

@@ -14,6 +14,7 @@ interface DashboardData {
   totalExpenses: number
   netBalance: number
   transactionCount: number
+  pendingCount: number
   accounts: Array<{
     id: string
     name: string
@@ -37,6 +38,19 @@ interface DashboardData {
     amount: { toNumber(): number }
     type: string
     date: string
+    status: string
+    category: { name: string; color: string | null } | null
+    bankAccount: { name: string; institution: string } | null
+  }>
+  pendingTransactions: Array<{
+    id: string
+    description: string
+    amount: { toNumber(): number }
+    type: string
+    date: string
+    status: string
+    categoryId?: string | null
+    recurringId?: string | null
     category: { name: string; color: string | null } | null
     bankAccount: { name: string; institution: string } | null
   }>
@@ -390,6 +404,77 @@ export default function Dashboard() {
           </div>
         )}
       </section>
+
+      {/* Pending Transactions */}
+      {data.pendingTransactions.length > 0 && (
+        <section className="bg-[var(--card)] p-6 rounded-2xl border border-amber-500/30">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <AlertTriangle size={16} className="text-amber-500" />
+              <h2 className="text-sm font-black text-amber-500 uppercase tracking-widest">Contas Pendentes</h2>
+            </div>
+            <span className="text-xs font-bold text-amber-500 bg-amber-500/10 px-2 py-1 rounded-full">
+              {data.pendingCount} pendente{data.pendingCount > 1 ? 's' : ''}
+            </span>
+          </div>
+          <div className="divide-y divide-amber-500/20">
+            {data.pendingTransactions.map(tx => (
+              <div key={tx.id} className="flex items-center justify-between py-3">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-xl bg-amber-500/10">
+                    <AlertTriangle size={16} className="text-amber-500" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold truncate max-w-[200px] sm:max-w-none">{tx.description}</p>
+                    <p className="text-[10px] text-amber-500">
+                      {tx.category?.name ?? 'Sem categoria'}
+                      {tx.bankAccount && (
+                        <>
+                          <span> · </span>
+                          <span>{tx.bankAccount.name}</span>
+                        </>
+                      )}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="text-right">
+                    <p className="text-sm font-black text-amber-500">
+                      -{formatCurrency(toNumber(tx.amount))}
+                    </p>
+                    <p className="text-[10px] text-amber-500">{new Date(tx.date).toLocaleDateString('pt-BR')}</p>
+                  </div>
+                  <button
+                    onClick={async (e) => {
+                      const btn = e.currentTarget as HTMLButtonElement
+                      btn.disabled = true
+                      btn.textContent = 'Pagando...'
+                      await fetch('/api/transactions', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                          description: tx.description,
+                          amount: toNumber(tx.amount),
+                          type: tx.type,
+                          date: new Date(tx.date).toISOString().split('T')[0],
+                          categoryId: tx.categoryId || undefined,
+                          isRecurring: true,
+                          recurringId: tx.recurringId || undefined,
+                          status: 'PAID',
+                        }),
+                      })
+                      fetchData()
+                    }}
+                    className="px-3 py-1.5 text-xs font-bold bg-[var(--green-600)] text-white rounded-lg hover:bg-[var(--green-700)] transition-colors"
+                  >
+                    Pagar
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Floating Add Button */}
       <TransactionForm onSuccess={fetchData} />

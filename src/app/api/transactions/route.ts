@@ -33,9 +33,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: validation.errors.join(', ') }, { status: 400 })
     }
 
+    const dateStr = validation.data.date
+    const date = dateStr.includes('T') ? new Date(dateStr) : new Date(dateStr + 'T12:00:00')
+
     const transaction = await createTransaction(userId, {
       ...validation.data,
-      date: new Date(validation.data.date + 'T12:00:00'),
+      date,
     })
 
     return NextResponse.json(transaction)
@@ -57,7 +60,7 @@ export async function PUT(req: NextRequest) {
     const { id, ...data } = validation.data
     const updateData = {
       ...data,
-      date: data.date ? new Date(data.date + 'T12:00:00') : undefined,
+      date: data.date ? (data.date.includes('T') ? new Date(data.date) : new Date(data.date + 'T12:00:00')) : undefined,
     }
     const transaction = await updateTransaction(id, updateData)
     return NextResponse.json(transaction)
